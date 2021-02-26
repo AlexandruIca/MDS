@@ -9,7 +9,8 @@ console_handler.setLevel(logging.INFO)
 file_handler = logging.FileHandler(filename='server_log.txt')
 file_handler.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter('[%(asctime)s - %(name)s - %(levelname)s]: %(message)s')
+formatter = logging.Formatter(
+    '[%(asctime)s - %(name)s - %(levelname)s]: %(message)s')
 
 console_handler.setFormatter(formatter)
 file_handler.setFormatter(formatter)

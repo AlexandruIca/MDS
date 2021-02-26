@@ -5,7 +5,8 @@ import tornado.websocket
 
 from log import logger
 
-tornado.options.define('port', default=5634, help='Specify port to listen to', type=int)
+tornado.options.define('port', default=5634,
+                       help='Specify port to listen to', type=int)
 tornado.options.define('debug', default=True, help='Run in debug mode')
 
 config = tornado.options.options
@@ -27,7 +28,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
 
 def main():
-    app = tornado.web.Application([ (r'/ws', WSHandler) ])
+    app = tornado.web.Application([(r'/ws', WSHandler)])
     app.listen(config.port)
     tornado.ioloop.IOLoop.current().start()
 
