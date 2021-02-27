@@ -1,0 +1,34 @@
+name: Testing
+
+on:
+    push:
+        branches: [master]
+
+jobs:
+    static_analysis:
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macos-latest, windows-latest]
+
+        runs-on: ${{ matrix.os }}
+        steps:
+          - uses: actions/checkout@v2
+
+          - uses: actions/setup-python@v2
+            with:
+                python-version: '3.x'
+
+          - name: Install poetry
+            uses: abatilo/actions-poetry@v2.1.0
+            with:
+                poetry-version: '1.1.2'
+
+          - name: Install dependencies
+            run: |
+                cd backend/
+                poetry install
+
+          - name: Run tests
+            run: |
+                cd backend/
+                ../scripts/tests.sh
