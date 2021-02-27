@@ -1,0 +1,30 @@
+name: StaticAnalysis
+
+on:
+    push:
+        branches: [master]
+
+jobs:
+    static_analysis:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+
+          - uses: actions/setup-python@v2
+            with:
+                python-version: '3.x'
+
+          - name: Install poetry
+            uses: abatilo/actions-poetry@v2.1.0
+            with:
+                poetry-version: '1.1.2'
+
+          - name: Install dependencies
+            run: |
+                cd backend/
+                poetry install
+
+          - name: Run flake8
+            run: |
+                cd backend/
+                ../scripts/flake8.sh
