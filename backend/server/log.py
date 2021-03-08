@@ -4,7 +4,7 @@ logger = logging.getLogger('logger')
 logger.setLevel(logging.DEBUG)
 
 console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
+console_handler.setLevel(logging.DEBUG)
 
 file_handler = logging.FileHandler(filename='server_log.txt')
 file_handler.setLevel(logging.DEBUG)
