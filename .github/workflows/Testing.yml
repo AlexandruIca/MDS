@@ -5,7 +5,7 @@ on:
         branches: [fastapi]
 
 jobs:
-    static_analysis:
+    testing:
         strategy:
             matrix:
                 os: [ubuntu-latest, macos-latest, windows-latest]
