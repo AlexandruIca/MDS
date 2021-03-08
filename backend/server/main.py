@@ -1,52 +1,66 @@
-import tornado
-import tornado.options
-import tornado.ioloop
-import tornado.websocket
+from typing import List
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from log import logger
 
 import sqlite3
 
-from log import logger
-
-tornado.options.define('port', default=5634,
-                       help='Specify port to listen to', type=int)
-tornado.options.define('debug', default=True, help='Run in debug mode')
-
-config = tornado.options.options
-
 db = sqlite3.connect('server.db')
-db_cursor = db.cursor()
-
-db_cursor.execute('CREATE TABLE IF NOT EXISTS messages(content text)')
+app = FastAPI()
 
 
-class WSHandler(tornado.websocket.WebSocketHandler):
-    def check_origin(self, origin) -> bool:
-        return True
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
 
-    def open(self):
-        logger.info('New connection!')
-        to_send: str = ''
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
 
-        for row in db_cursor.execute('SELECT content FROM messages'):
-            to_send += f'{row[0]}\n'
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
 
-        self.write_message(to_send)
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
 
-    def on_message(self, message):
-        logger.info(f'Message received: {message}')
-        db_cursor.execute('INSERT INTO messages VALUES(?)', (message,))
-        db.commit()
-
-    def on_close(self):
-        logger.info('Connection closed!')
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
 
 
-def main():
-    app = tornado.web.Application([(r'/ws', WSHandler)])
-    app.listen(config.port)
-    tornado.ioloop.IOLoop.current().start()
+manager = ConnectionManager()
+
+
+def insert_message(msg: str):
+    db_cursor = db.cursor()
+    db_cursor.execute('INSERT INTO messages(content) VALUES(?)', (msg,))
+    db.commit()
+
+
+@app.websocket('/ws')
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    await manager.send_personal_message('To be sent!', websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            insert_message(f'{data}')
+            await manager.send_personal_message(f'You wrote: {data}', websocket)
+            await manager.broadcast(f'Somebody said: {data}')
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        await manager.broadcast('Somebody disconnected!')
+
+
+@app.on_event('startup')
+def startup_event():
+    logger.info('Starting application, setting up database...')
+    cursor = db.cursor()
+    cursor.execute('CREATE TABLE IF NOT EXISTS messages(content text)')
+    db.commit()
+
+
+@app.on_event('shutdown')
+def shutdown_event():
+    logger.info('Shutting down, closing database connection...')
     db.close()
-
-
-if __name__ == '__main__':
-    main()
