@@ -2,7 +2,7 @@ name: Testing
 
 on:
     push:
-        branches: [fastapi]
+        branches: [main]
 
 jobs:
     testing:
