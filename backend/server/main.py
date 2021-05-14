@@ -5,6 +5,63 @@ from log import logger
 import sqlite3
 
 db = sqlite3.connect('server.db')
+cursor = db.cursor()
+
+cursor.execute("""CREATE TABLE IF NOT EXISTS users (
+        user_id integer PRIMARY KEY,
+        email text,
+        password text,
+        first_name text,
+        last_name text
+    )""")
+db.commit()
+
+cursor.execute("""CREATE TABLE IF NOT EXISTS groups (
+    group_id integer PRIMARY KEY,
+    group_name text,
+    is_dm integer
+)""")
+db.commit()
+
+cursor.execute("""CREATE TABLE IF NOT EXISTS participans (
+    group_id integer,
+    user_id integer,
+    joined_on text,
+    PRIMARY KEY (group_id, user_id)
+)""")
+db.commit()
+
+cursor.execute("""CREATE TABLE IF NOT EXISTS files (
+    file_id integer PRIMARY KEY,
+    file_
+)""")
+db.commit()
+
+cursor.execute("""CREATE TABLE IF NOT EXISTS messages (
+        message_id integer PRIMARY KEY,
+        date_ text,
+        conv_id integer,
+        sender_id integer,
+        reply integer,
+        mess_text text,
+        file_id integer,
+        FOREIGN KEY(conv_id) REFERENCES groups(group_id),
+        FOREIGN KEY(sender_id) REFERENCES users(user_id),
+        FOREIGN KEY(file_id) REFERENCES files(file_id)
+)""")
+db.commit()
+
+cursor.execute("""CREATE TABLE IF NOT EXISTS starred_messages (
+    user_id integer PRIMARY KEY,
+    message_id integer,
+    FOREIGN KEY(user_id) REFERENCES users(user_id),
+    FOREIGN KEY(message_id) REFERENCES messages(message_id)
+)""")
+db.commit()
+
+
+
+
 app = FastAPI()
 
 
