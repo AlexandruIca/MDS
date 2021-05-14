@@ -59,9 +59,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS starred_messages (
 )""")
 db.commit()
 
-
-
-
 app = FastAPI()
 
 
