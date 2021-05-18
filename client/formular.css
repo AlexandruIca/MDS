@@ -14,8 +14,6 @@ h2{
     justify-content: space-evenly;
     flex-direction: column;
     transform: translateX(-50%);
-    height: 45%;
-    width: 25%;
     padding: 1%;
     left: 50%;
     top: 25%;
@@ -23,6 +21,7 @@ h2{
 }
 
 button{
+    margin-top: 15px;
     text-decoration: none;
     text-align: center;
     font-size: 17px;
@@ -36,6 +35,7 @@ input{
 }
 
 label{
+    margin-top: 10px;
     color: lightgray;
     font-size: 20px;
 }

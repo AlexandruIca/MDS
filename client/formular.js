@@ -4,7 +4,9 @@ const login = document.getElementById('login')
 
 login.addEventListener("click", () => {
     let d = {
-        "User": document.getElementById('user').value,
+        "Email": document.getElementById('email').value,
+        "Fst": document.getElementById('fst').value,
+        "Snd": document.getElementById('snd').value,
         "Password": document.getElementById('pass').value 
     }
     ws.send(JSON.stringify(d));    

@@ -9,7 +9,7 @@ db = sqlite3.connect('server.db')
 cursor = db.cursor()
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS users (
-        user_id integer PRIMARY KEY,
+        user_id integer PRIMARY KEY AUTOINCREMENT,
         email text,
         password text,
         first_name text,
@@ -99,8 +99,13 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
-            for k, v in json.loads(data).items():
-                print(k, v)
+            cr = db.cursor()
+            email, first, second, password = json.loads(data).values()
+            print(email, first, second, password)
+            cr.execute('INSERT INTO users (email, password, first_name, last_name) VALUES (?, ?, ?, ?)', (email, password, first, second))
+            db.commit()
+            for row in cr.execute('select * from users').fetchall():
+                print(row)
             insert_message(f'{data}')
             await manager.send_personal_message(f'You wrote: {data}', websocket)
             await manager.broadcast(f'Somebody said: {data}')
