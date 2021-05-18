@@ -101,7 +101,6 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             cr = db.cursor()
             email, first, second, password = json.loads(data).values()
-            print(email, first, second, password)
             cr.execute('INSERT INTO users (email, password, first_name, last_name) VALUES (?, ?, ?, ?)', (email, password, first, second))
             db.commit()
             for row in cr.execute('select * from users').fetchall():

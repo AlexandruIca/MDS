@@ -1,8 +1,8 @@
 var ws = new WebSocket("ws://localhost:5634/ws");
-const login = document.getElementById('login')
+const create = document.getElementById('create')
 
 
-login.addEventListener("click", () => {
+create.addEventListener("click", () => {
     let d = {
         "Email": document.getElementById('email').value,
         "Fst": document.getElementById('fst').value,
