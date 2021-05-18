@@ -3,6 +3,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from log import logger
 
 import sqlite3
+import json
 
 db = sqlite3.connect('server.db')
 cursor = db.cursor()
@@ -98,6 +99,8 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
+            for k, v in json.loads(data).items():
+                print(k, v)
             insert_message(f'{data}')
             await manager.send_personal_message(f'You wrote: {data}', websocket)
             await manager.broadcast(f'Somebody said: {data}')
