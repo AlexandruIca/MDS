@@ -5,6 +5,7 @@ from sqlite3 import Connection, Cursor
 from log import logger
 
 import os
+import bcrypt
 
 
 class Database:
@@ -79,14 +80,28 @@ class Database:
         self.db.close()
 
     def insert_user(self, email: str, first_name: str, last_name: str, password: str):
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+
         cursor: Cursor = self.db.cursor()
         cursor.execute('''
         INSERT INTO
             users(email, password, first_name, last_name)
         VALUES (?, ?, ?, ?)
-        ''', (email, password, first_name, last_name))
+        ''', (email, hashed, first_name, last_name))
         self.db.commit()
-        logger.info(f'Inserted user `{first_name} {last_name}`')
+        logger.info(f'Inserted user `{first_name} {last_name}, password={hashed}`')
+
+    def check_user(self, email: str, password: str) -> bool:
+        cursor: Cursor = self.db.cursor()
+        cnt = cursor.execute('SELECT COUNT(*) FROM users WHERE email = ?', (email,)).fetchone()
+
+        if int(cnt[0]) == 0:
+            return False
+
+        hashed = cursor.execute('SELECT password FROM users WHERE email = ?', (email,)).fetchone()
+
+        return bcrypt.checkpw(str(password).encode('utf-8'), str(hashed[0]).encode('utf-8')[2:-1])
 
     def each_user(self) -> Any:
         cursor: Cursor = self.db.cursor()
