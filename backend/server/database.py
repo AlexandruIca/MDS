@@ -101,7 +101,7 @@ class Database:
 
         hashed = cursor.execute('SELECT password FROM users WHERE email = ?', (email,)).fetchone()
 
-        return bcrypt.checkpw(str(password).encode('utf-8'), str(hashed[0]).encode('utf-8')[2:-1])
+        return bcrypt.checkpw(password.encode('utf-8'), str(hashed[0]).encode('utf-8')[2:-1])
 
     def each_user(self) -> Any:
         cursor: Cursor = self.db.cursor()
