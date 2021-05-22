@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up</title>
+    <link rel="stylesheet" href="formular.css">
+</head>
+
+<body>
+    <div id="formular">
+        <h2>Sign up</h2>
+        <label for="email">Email:</label>
+        <input id="email" name="email" type="email">
+        <p id="email_validation">Invalid email</p>
+
+        <label for="fst">First Name:</label>
+        <input id="fst" name="fst" type="text">
+        <p id="fst_validation">Invalid name</p>
+
+        <label for="snd">Last Name:</label>
+        <input id="snd" name="snd" type="text">
+        <p id="snd_validation">Invalid name</p>
+
+        <label for="pass">Password:</label>
+        <input id="pass" name="pass" type="password">
+        <p id="pass_validation">Invalid password</p>
+
+        <label for="cpass">Confirm Password:</label>
+        <input id="cpass" name="cpass" type="password">
+        <p id="cpass_validation">Passwords don't match</p>
+
+        <button id="create">Sign up</button>
+    </div>
+    <script src="./signup.js"></script>
+</body>
+
+</html>
