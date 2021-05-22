@@ -1,65 +1,13 @@
 from typing import List
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from log import logger
 
-import sqlite3
 import json
 
-db = sqlite3.connect('server.db')
-cursor = db.cursor()
+from log import logger
+from database import Database
 
-cursor.execute("""CREATE TABLE IF NOT EXISTS users (
-        user_id integer PRIMARY KEY AUTOINCREMENT,
-        email text,
-        password text,
-        first_name text,
-        last_name text
-    )""")
-db.commit()
 
-cursor.execute("""CREATE TABLE IF NOT EXISTS groups (
-    group_id integer PRIMARY KEY,
-    group_name text,
-    is_dm integer
-)""")
-db.commit()
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS participans (
-    group_id integer,
-    user_id integer,
-    joined_on text,
-    PRIMARY KEY (group_id, user_id)
-)""")
-db.commit()
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS files (
-    file_id integer PRIMARY KEY,
-    file_
-)""")
-db.commit()
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS messages (
-        message_id integer PRIMARY KEY,
-        date_ text,
-        conv_id integer,
-        sender_id integer,
-        reply integer,
-        mess_text text,
-        file_id integer,
-        FOREIGN KEY(conv_id) REFERENCES groups(group_id),
-        FOREIGN KEY(sender_id) REFERENCES users(user_id),
-        FOREIGN KEY(file_id) REFERENCES files(file_id)
-)""")
-db.commit()
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS starred_messages (
-    user_id integer PRIMARY KEY,
-    message_id integer,
-    FOREIGN KEY(user_id) REFERENCES users(user_id),
-    FOREIGN KEY(message_id) REFERENCES messages(message_id)
-)""")
-db.commit()
-
+db: Database = Database('server.db')
 app = FastAPI()
 
 
@@ -85,12 +33,6 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-def insert_message(msg: str):
-    db_cursor = db.cursor()
-    db_cursor.execute('INSERT INTO messages(content) VALUES(?)', (msg,))
-    db.commit()
-
-
 @app.websocket('/ws')
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
@@ -99,13 +41,12 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
-            cr = db.cursor()
             email, first, second, password = json.loads(data).values()
-            cr.execute('INSERT INTO users (email, password, first_name, last_name) VALUES (?, ?, ?, ?)', (email, password, first, second))
-            db.commit()
-            for row in cr.execute('select * from users').fetchall():
+            db.insert_user(email=email, first_name=first, last_name=second, password=password)
+
+            for row in db.each_user():
                 print(row)
-            insert_message(f'{data}')
+
             await manager.send_personal_message(f'You wrote: {data}', websocket)
             await manager.broadcast(f'Somebody said: {data}')
     except WebSocketDisconnect:
@@ -116,12 +57,10 @@ async def websocket_endpoint(websocket: WebSocket):
 @app.on_event('startup')
 def startup_event():
     logger.info('Starting application, setting up database...')
-    cursor = db.cursor()
-    cursor.execute('CREATE TABLE IF NOT EXISTS messages(content text)')
-    db.commit()
+    db.create_schema()
 
 
 @app.on_event('shutdown')
 def shutdown_event():
     logger.info('Shutting down, closing database connection...')
-    db.close()
+    db.shutdown()
