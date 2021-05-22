@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-poetry run pytest
+PYTHONPATH=./server poetry run pytest tests/
