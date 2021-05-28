@@ -1,3 +1,6 @@
+const formularSignIn = document.getElementById('formularSignIn')
+const formularSignUp = document.getElementById('formularSignUp')
+
 let validations = [
     [document.getElementById("email"), document.getElementById("email_validation"), new RegExp(/^[a-zA-z0-9_-]+(\.[a-zA-z0-9_-]+)*@([a-zA-Z0-9]+\.)+[a-zA-Z]+$/)],
     [document.getElementById("fst"), document.getElementById("fst_validation"), new RegExp(/^[A-Z][a-z]+(-[A-Z][a-z]+)*$/)],
@@ -31,4 +34,37 @@ document.getElementById('create').addEventListener("click", () => {
         "Password": validations[3][0].value
     }
     ws.send(JSON.stringify(d))
+})
+
+
+showForm = function(formular){
+    formular.style.visibility = "visible"
+    formular.style.width = "100%"
+    formular.style.height = "100%"
+    formular.style.display = "grid"
+    formular.style.alignItems = "center"
+    formular.style.gridTemplateColumns = "auto auto"
+    formular.style.gridTemplateColumns = "auto auto"
+    formular.style.backgroundColor = "rgba(0, 0, 0, 0.6)"
+}
+
+cancelForm = function(formular){
+    formular.style.visibility = "hidden"
+    formular.style.display = "none"
+}
+
+document.getElementById("signin").addEventListener("click", () => {
+    showForm(formularSignIn)
+})
+
+document.getElementById("signup").addEventListener("click", () => {
+    showForm(formularSignUp)
+})
+
+document.getElementById("form-cancel-signin").addEventListener("click", () => {
+    cancelForm(formularSignIn)
+})
+
+document.getElementById("form-cancel-signup").addEventListener("click", () => {
+    cancelForm(formularSignUp)
 })

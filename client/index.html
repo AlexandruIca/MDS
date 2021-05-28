@@ -5,12 +5,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     <title>Sign up</title>
     <link rel="stylesheet" href="formular.css">
 </head>
 
 <body>
-    <div id="formular">
+    <div id="navbar">
+        <button id="signin">Sign In</button>
+        <button id="signup">Sign Up</button>
+    </div>
+
+    <div id="formularSignIn">
+        <h2>Sign in</h2>
+        <label for="email">Email:</label>
+        <input id="email" name="email" type="email">
+    
+        <label for="pass">Password:</label>
+        <input id="pass" name="pass" type="password">
+        
+        <div id="form-signup-wrapper">
+            <div id="form-signup-btn">
+                <button id="create">Sign in</button>
+                <button id="form-cancel-signin" style="background-color: rgb(250, 25, 0);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="formularSignUp">
         <h2>Sign up</h2>
         <label for="email">Email:</label>
         <input id="email" name="email" type="email">
@@ -32,7 +55,12 @@
         <input id="cpass" name="cpass" type="password">
         <p id="cpass_validation">Passwords don't match</p>
 
-        <button id="create">Sign up</button>
+        <div id="form-signup-wrapper">
+            <div id="form-signup-btn">
+                <button id="create">Sign up</button>
+                <button id="form-cancel-signup" style="background-color: red;">Cancel</button>
+            </div>
+        </div>
     </div>
     <script src="./signup.js"></script>
 </body>
