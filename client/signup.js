@@ -26,7 +26,7 @@ document.getElementById("cpass").addEventListener("input", () => {
 
 
 var ws = new WebSocket("ws://localhost:5634/ws")
-document.getElementById('create').addEventListener("click", () => {
+document.getElementById('createAcc').addEventListener("click", () => {
     let d = {
         "Email": validations[0][0].value,
         "Fst": validations[1][0].value,
@@ -42,8 +42,6 @@ showForm = function(formular){
     formular.style.width = "100%"
     formular.style.height = "100%"
     formular.style.display = "grid"
-    formular.style.alignItems = "center"
-    formular.style.gridTemplateColumns = "auto auto"
     formular.style.gridTemplateColumns = "auto auto"
     formular.style.backgroundColor = "rgba(0, 0, 0, 0.6)"
 }
