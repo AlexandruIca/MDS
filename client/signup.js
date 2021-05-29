@@ -1,4 +1,4 @@
-const formularSignIn = document.getElementById('formularSignIn')
+var ws = new WebSocket("ws://localhost:5634/ws")
 const formularSignUp = document.getElementById('formularSignUp')
 
 let validations = [
@@ -24,10 +24,10 @@ document.getElementById("cpass").addEventListener("input", () => {
         document.getElementById("cpass_validation").style.visibility = "visible";
 })
 
-
-var ws = new WebSocket("ws://localhost:5634/ws")
 document.getElementById('createAcc').addEventListener("click", () => {
+    alert('adasdasd')
     let d = {
+        "Status": 201, 
         "Email": validations[0][0].value,
         "Fst": validations[1][0].value,
         "Snd": validations[2][0].value,
@@ -35,7 +35,6 @@ document.getElementById('createAcc').addEventListener("click", () => {
     }
     ws.send(JSON.stringify(d))
 })
-
 
 showForm = function(formular){
     formular.style.visibility = "visible"

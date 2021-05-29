@@ -1,0 +1,58 @@
+body
+{
+    margin: 0;
+    display: flex;
+    height: 100vh;
+}
+
+#groups{
+    background-color: #8080ff;
+    width: 20%;
+}
+
+.conversation
+{
+    background-color: #e6f2ff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex: 1;
+}
+
+#AllMessages
+{
+    padding: 0 4%;
+    overflow-y: scroll;
+    max-height: calc(100% - 50px);
+}
+
+#AllMessages > div
+{
+    max-width: 70%;
+    width: fit-content;
+    padding: 5px;
+    border-radius: 10px;
+    text-align: justify;
+    background-color: lightgray;
+    margin-bottom: 20px;
+}
+
+#sent
+{
+    margin-left: auto;
+}
+
+input
+{
+    width: 50%;
+    border: 2px solid black;
+    margin: 10px;
+    padding: 5px;
+    outline: none;
+}
+
+svg
+{
+    width: 30px;
+    height: 30px;
+}
