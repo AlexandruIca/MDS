@@ -1,4 +1,3 @@
-import sqlite3
 from typing import List
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
