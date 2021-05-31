@@ -36,7 +36,6 @@ manager = ConnectionManager()
 @app.websocket('/ws')
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
-    await manager.send_personal_message('To be sent!', websocket)
 
     # conn = sqlite3.connect('server.db')
     # cur = conn.cursor()
@@ -48,22 +47,22 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             load_json = list(json.loads(data).values())
             print(load_json)
-            if load_json[0] == 200:
+            if load_json[0] == "signin":
                 email, password = load_json[1:]
-                for row in db.each_user():
-                    print(row)
-                    if row[1] == email:
-                        print('yes')
-                        break
-            else:
+                if db.check_user(email, password):
+                    answer_json = {"type": "signin", "status": "ok"}
+                    await manager.send_personal_message(json.dumps(answer_json), websocket)
+                else:
+                    answer_json = {"type": "signin", "status": "error"}
+                    await manager.send_personal_message(json.dumps(answer_json), websocket)
+            elif load_json[0] == "signup":
                 email, first, second, password = load_json[1:]
                 db.insert_user(email=email, first_name=first, last_name=second, password=password)
-                for row in db.each_user():
-                    print(row)
+                # for row in db.each_user():
+                #     print(row)
+                answer_json = {"type" : "signup", "status": "ok"}
+                await manager.send_personal_message(json.dumps(answer_json), websocket)
 
-            #await manager.send_personal_message('Succesful 1', websocket)
-            #await manager.send_personal_message(f'You wrote: {data}', websocket)
-            await manager.broadcast(f'Somebody said: {data}')
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast('Somebody disconnected!')
