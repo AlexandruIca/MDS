@@ -59,7 +59,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 db.insert_user(email=email, first_name=first, last_name=second, password=password)
                 # for row in db.each_user():
                 #     print(row)
-                answer_json = {"type" : "signup", "status": "ok"}
+                answer_json = {"type": "signup", "status": "ok"}
                 await manager.send_personal_message(json.dumps(answer_json), websocket)
 
     except WebSocketDisconnect:
