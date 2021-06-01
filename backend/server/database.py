@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Tuple
 
 import sqlite3
 from sqlite3 import Connection, Cursor
@@ -35,7 +35,7 @@ class Database:
         logger.info('Created table `groups`')
 
         cursor.execute('''
-        CREATE TABLE IF NOT EXISTS participans (
+        CREATE TABLE IF NOT EXISTS participants (
             group_id integer,
             user_id integer,
             joined_on text,
@@ -77,6 +77,7 @@ class Database:
         self.db.commit()
 
     def shutdown(self):
+        self.db.commit()
         self.db.close()
 
     def insert_user(self, email: str, first_name: str, last_name: str, password: str):
@@ -102,6 +103,101 @@ class Database:
         hashed = cursor.execute('SELECT password FROM users WHERE email = ?', (email,)).fetchone()
 
         return bcrypt.checkpw(password.encode('utf-8'), str(hashed[0]).encode('utf-8')[2:-1])
+
+    def get_id_for_user(self, email: str) -> int:
+        cursor: Cursor = self.db.cursor()
+        query: str = 'SELECT user_id FROM users WHERE email = ?'
+
+        return int(cursor.execute(query, (email,)).fetchone()[0])
+
+    def get_user_info(self, user_id: int) -> Tuple[str, str, str]:
+        cursor: Cursor = self.db.cursor()
+        query: str = 'SELECT email, first_name, last_name FROM users WHERE user_id = ?'
+
+        return cursor.execute(query, (user_id,)).fetchone()
+
+    def get_groups_for_user(self, user_id: int) -> int:
+        cursor: Cursor = self.db.cursor()
+        query: str = '''
+        SELECT
+            group_id
+        FROM
+            participants
+        WHERE
+            user_id = ?
+        '''
+
+        for row in cursor.execute(query, (user_id,)):
+            yield int(row[0])
+
+    def get_group_info(self, group_id: int) -> Any:
+        info = {}
+
+        cursor: Cursor = self.db.cursor()
+        query: str = '''
+        SELECT
+            group_id, group_name
+        FROM
+            groups
+        WHERE
+            group_id = ?
+        '''
+
+        (group_id, group_name) = cursor.execute(query, (group_id,)).fetchone()
+        info['groupId'] = group_id
+        info['groupName'] = group_name
+        info['messages'] = []
+
+        query: str = '''
+        SELECT
+            message_id, date_, conv_id, sender_id, reply, mess_text
+        FROM
+            messages
+        WHERE
+            conv_id = ?
+        '''
+
+        for msg in cursor.execute(query, (group_id,)):
+            sender_id = int(msg[3])
+            (email, first_name, last_name) = self.get_user_info(sender_id)
+            sender_name_format = f'{first_name} {last_name}'
+            sender_name = sender_name_format if len(sender_name_format) > 0 else email
+
+            info['messages'].append({
+                'id': msg[0],
+                'date': msg[1],
+                'conversation_id': msg[2],
+                'sender_id': sender_id,
+                'sender_email': email,
+                'sender_name': sender_name,
+                'is_reply': msg[4],
+                'text': msg[5],
+            })
+
+        return info
+
+    def insert_message(self, sender_id: int, conversation_id: int, text: str):
+        cursor: Cursor = self.db.cursor()
+
+        cursor.execute('''
+        INSERT INTO
+            messages(
+                date_,
+                conv_id,
+                sender_id,
+                reply,
+                mess_text,
+                file_id
+            )
+        VALUES (
+            date('now'),
+            ?,
+            ?,
+            0,
+            ?,
+            NULL
+        )
+        ''', (conversation_id, sender_id, text))
 
     def each_user(self) -> Any:
         cursor: Cursor = self.db.cursor()

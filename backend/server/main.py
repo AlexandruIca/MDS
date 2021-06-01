@@ -36,11 +36,6 @@ manager = ConnectionManager()
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
 
-    # conn = sqlite3.connect('server.db')
-    # cur = conn.cursor()
-    # cur.execute("SELECT * FROM users")
-    # rows = cur.fetchall()
-    # print(rows)
     try:
         while True:
             data = await websocket.receive_text()
@@ -49,7 +44,14 @@ async def websocket_endpoint(websocket: WebSocket):
             if load_json[0] == "signin":
                 email, password = load_json[1:]
                 if db.check_user(email, password):
-                    answer_json = {"type": "signin", "status": "ok"}
+                    answer_json = {"type": "signin", "status": "ok", "groups": []}
+                    user_id: int = db.get_id_for_user(email)
+
+                    for group in db.get_groups_for_user(user_id):
+                        convos = db.get_group_info(group)
+                        print(convos)
+                        answer_json["groups"].append(convos)
+
                     await manager.send_personal_message(json.dumps(answer_json), websocket)
                 else:
                     answer_json = {"type": "signin", "status": "error"}
@@ -61,6 +63,22 @@ async def websocket_endpoint(websocket: WebSocket):
                 #     print(row)
                 answer_json = {"type": "signup", "status": "ok"}
                 await manager.send_personal_message(json.dumps(answer_json), websocket)
+            elif load_json[0] == "send-message":
+                sender = load_json[1]  # 'from'
+                conversation = int(load_json[2])  # 'to'
+                text = load_json[3]  # 'text'
+                user_id = db.get_id_for_user(sender)
+                username = db.get_user_info(user_id)[0]
+                db.insert_message(user_id, conversation, text)
+
+                answer = {
+                    "type": "receive-message",
+                    "conversation": conversation,
+                    "sender": user_id,
+                    "sender_name": username,
+                    "text": text
+                }
+                await manager.send_personal_message(json.dumps(answer), websocket)
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)
