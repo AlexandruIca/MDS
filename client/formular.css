@@ -92,6 +92,10 @@ button:hover {
 #groups {
     background-color: #8080ff;
     width: 20%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: start;
+    align-items: center;
 }
 
 .conversation
