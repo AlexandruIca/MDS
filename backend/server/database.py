@@ -202,5 +202,5 @@ class Database:
     def each_user(self) -> Any:
         cursor: Cursor = self.db.cursor()
 
-        for row in cursor.execute('SELECT * FROM users').fetchall():
+        for row in cursor.execute('SELECT * FROM users'):
             yield row

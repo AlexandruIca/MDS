@@ -51,8 +51,6 @@ async def websocket_endpoint(websocket: WebSocket):
                         convos = db.get_group_info(group)
                         answer_json["groups"].append(convos)
 
-                    print(answer_json)
-
                     await manager.send_personal_message(json.dumps(answer_json), websocket)
                 else:
                     answer_json = {"type": "signin", "status": "error"}
@@ -60,8 +58,6 @@ async def websocket_endpoint(websocket: WebSocket):
             elif load_json[0] == "signup":
                 email, first, second, password = load_json[1:]
                 db.insert_user(email=email, first_name=first, last_name=second, password=password)
-                # for row in db.each_user():
-                #     print(row)
                 answer_json = {"type": "signup", "status": "ok"}
                 await manager.send_personal_message(json.dumps(answer_json), websocket)
             elif load_json[0] == "send-message":
@@ -80,6 +76,12 @@ async def websocket_endpoint(websocket: WebSocket):
                     "text": text
                 }
                 await manager.send_personal_message(json.dumps(answer), websocket)
+            elif load_json[0] == "users":
+                users = []
+                for user in db.each_user():
+                    if user != load_json[1]:
+                        users.append(user[1])
+                await manager.send_personal_message(json.dumps({"type": "getUsers", "users": users}), websocket)
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)

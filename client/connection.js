@@ -1,4 +1,5 @@
 var ws = new WebSocket("ws://localhost:5634/ws")
+var allUsers = []
 var user = ""
 var currentConversation = 0
 
@@ -53,22 +54,21 @@ function showMessage(message) {
 ws.onmessage = (msg) => {
     answer = JSON.parse(msg.data)
     console.log(answer)
-    if (answer.type == "signin") {
-        if (answer.status == "ok") {
+    if (answer.type === "signin") {
+        if (answer.status === "ok") {
             user = document.getElementById("emailLog").value
-            console.log(user)
             cancelForm(formularSignIn)
             document.getElementById("signin").style.display = "none"
             document.getElementById("signup").style.display = "none"
             document.getElementById("log-out").style.display = "block"
-
             showMessages(answer.groups)
+            ws.send(JSON.stringify({"type": "users", "except": user}))
         } else {
             alert("Autentificare nereusita!")
         }
     }
-    if (answer.type == "signup") {
-        if (answer.status == "ok") {
+    if (answer.type === "signup") {
+        if (answer.status === "ok") {
             cancelForm(formularSignUp)
         }
         else {
@@ -79,6 +79,10 @@ ws.onmessage = (msg) => {
         if (answer.conversation === currentConversation) {
             showMessage(answer)
         }
+    }
+    if (answer.type === "getUsers"){
+        console.log(answer.users)
+        allUsers = answer.users
     }
 }
 

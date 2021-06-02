@@ -1,4 +1,7 @@
+const searchUser = document.getElementById("search-user")
+const usersDiv = document.getElementById("show-users")
 const formularSignIn = document.getElementById('formularSignIn')
+
 
 document.getElementById("logAcc").addEventListener("click", () => {
     const emailLog = document.getElementById("emailLog").value
@@ -15,4 +18,16 @@ document.getElementById("logAcc").addEventListener("click", () => {
         }
         ws.send(JSON.stringify(d))
     }
+})
+
+searchUser.addEventListener("input", () => {
+    usersDiv.innerText = ""
+    
+    allUsers.forEach(i => {
+        if (i.includes(searchUser.value)){
+            newUser = document.createElement("div")
+            newUser.innerText = i
+            usersDiv.appendChild(newUser)
+        }
+    })
 })
