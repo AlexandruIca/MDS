@@ -49,8 +49,9 @@ async def websocket_endpoint(websocket: WebSocket):
 
                     for group in db.get_groups_for_user(user_id):
                         convos = db.get_group_info(group)
-                        print(convos)
                         answer_json["groups"].append(convos)
+
+                    print(answer_json)
 
                     await manager.send_personal_message(json.dumps(answer_json), websocket)
                 else:

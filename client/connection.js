@@ -16,7 +16,7 @@ function showMessages(groups) {
         groupsElem.appendChild(newGroup)
 
         for (let j = 0; j < group.messages.length; ++j) {
-            let message = group.messages[i]
+            let message = group.messages[j]
             let allMessages = document.getElementById('AllMessages')
             let msgDiv = document.createElement('div')
             msgDiv.innerText = message.text
@@ -121,4 +121,13 @@ document.getElementById("btn-send").addEventListener("click", () => {
             'text': document.getElementById('send-message').value
         }));
     }
+})
+
+document.getElementById("log-out").addEventListener("click", () => {
+    user = ""
+    document.getElementById("signin").style.display = "block"
+    document.getElementById("signup").style.display = "block"
+    document.getElementById("log-out").style.display = "none"
+    document.getElementById('groups').innerHTML = ""
+    document.getElementById('AllMessages').innerHTML = ""
 })

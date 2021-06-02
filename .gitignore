@@ -6,3 +6,4 @@ server.db
 test.db
 .idea
 .vscode
+server.db-journal
