@@ -1,0 +1,74 @@
+:root {
+    font-size: 20px;
+    --background: white;
+    --sent-message-color: darkgray;
+    --received-message-color: lightgray;
+}
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+body {
+    background-color: var(--background);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;}
+    main {
+        display: flex;
+        flex: 1;}
+        #left {width: 10rem;}
+            #contacts > button {
+                width: 100%;
+                display: block;
+                text-align: center;
+                padding: .2rem;
+                margin: auto;}
+        #right {
+            display: flex;
+            flex-direction: column;
+            margin-top: auto;
+            width: 100%;}
+            #chatInfo {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;}
+                #chatInfo button, #chatInfo b {padding: .3rem;}
+            #messages {
+                height: calc(100vh - 1.76rem - 1.5rem);
+                padding: 2rem 1rem 0 1rem;
+                overflow-y: scroll;}
+            #writeArea {
+                display: flex;
+                align-items: center;}
+                #writeArea input {
+                    height: 1.5rem;
+                    flex: 1;}
+                #writeArea svg {
+                    display: block;
+                    width: 1.5rem;
+                    padding: .2rem;}
+
+#chatInfo {background-color: lightgray;}
+#left {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    background-color: darkgrey;}
+#menu * {display: block;}
+#menu input {
+    margin-bottom: .1rem;
+    width: 100%;}
+#menu b {flex-grow: 1;}
+#menu div {
+    height: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;}
+#menu svg {
+    width: 1.5rem;
+    height: 1.5rem;}
