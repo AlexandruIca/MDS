@@ -5,12 +5,15 @@ const formularSignIn = document.getElementById('formularSignIn')
 
 document.getElementById("logAcc").addEventListener("click", () => {
     const emailLog = document.getElementById("emailLog").value
-    const passLog = document.getElementById("passLog").value 
-    
-    if (emailLog == '' || passLog == ''){
+    const passLog = document.getElementById("passLog").value
+
+    if (emailLog == '' || passLog == '') {
         alert("Te rugam sa completezi datele de autentificare!")
     }
-    else{
+    else {
+        window.localStorage.setItem('mds_try_password', passLog)
+        window.localStorage.setItem('mds_email', emailLog)
+
         let d = {
             "Status": "signin",
             "Email": emailLog,
@@ -20,9 +23,10 @@ document.getElementById("logAcc").addEventListener("click", () => {
     }
 })
 
+/*
 searchUser.addEventListener("input", () => {
     usersDiv.innerText = ""
-    
+
     allUsers.forEach(i => {
         if (i.includes(searchUser.value)){
             newUser = document.createElement("div")
@@ -30,4 +34,4 @@ searchUser.addEventListener("input", () => {
             usersDiv.appendChild(newUser)
         }
     })
-})
+})*/
