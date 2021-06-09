@@ -1,5 +1,6 @@
 from typing import List
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
 
 import json
 
@@ -44,7 +45,17 @@ async def websocket_endpoint(websocket: WebSocket):
             if load_json[0] == "signin":
                 email, password = load_json[1:]
                 if db.check_user(email, password):
-                    answer_json = {"type": "signin", "status": "ok", "groups": []}
+                    user_id = db.get_id_for_user(email)
+                    _, first_name, last_name = db.get_user_info(user_id)
+
+                    answer_json = {
+                        "type": "signin",
+                        "status": "ok",
+                        "user_id": user_id,
+                        "first_name": first_name,
+                        "last_name": last_name,
+                        "groups": []
+                    }
                     user_id: int = db.get_id_for_user(email)
 
                     for group in db.get_groups_for_user(user_id):
@@ -65,14 +76,14 @@ async def websocket_endpoint(websocket: WebSocket):
                 conversation = int(load_json[2])  # 'to'
                 text = load_json[3]  # 'text'
                 user_id = db.get_id_for_user(sender)
-                username = db.get_user_info(user_id)[0]
+                user_email = db.get_user_info(user_id)[0]
                 db.insert_message(user_id, conversation, text)
 
                 answer = {
                     "type": "receive-message",
                     "conversation": conversation,
                     "sender": user_id,
-                    "sender_name": username,
+                    "sender_email": user_email,
                     "text": text
                 }
                 await manager.send_personal_message(json.dumps(answer), websocket)

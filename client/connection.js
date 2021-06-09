@@ -3,6 +3,7 @@ var allUsers = []
 var user = ""
 var currentConversation = 0
 
+/*
 function showMessages(groups) {
     for (let i = 0; i < groups.length; ++i) {
         let group = groups[i]
@@ -33,7 +34,9 @@ function showMessages(groups) {
         }
     }
 }
+*/
 
+/*
 function showMessage(message) {
     // message.conversation
     // message.sender
@@ -50,6 +53,7 @@ function showMessage(message) {
 
     document.getElementById('AllMessages').appendChild(newMessage)
 }
+*/
 
 ws.onmessage = (msg) => {
     answer = JSON.parse(msg.data)
@@ -60,9 +64,12 @@ ws.onmessage = (msg) => {
             cancelForm(formularSignIn)
             document.getElementById("signin").style.display = "none"
             document.getElementById("signup").style.display = "none"
-            document.getElementById("log-out").style.display = "block"
-            showMessages(answer.groups)
-            ws.send(JSON.stringify({"type": "users", "except": user}))
+            // document.getElementById("log-out").style.display = "block"
+            // showMessages(answer.groups)
+            ws.send(JSON.stringify({ "type": "users", "except": user }))
+            window.localStorage.setItem('mds_password', window.localStorage.getItem('mds_try_password'))
+            window.location.replace("./chat.html")
+            ws.close()
         } else {
             alert("Autentificare nereusita!")
         }
@@ -77,10 +84,10 @@ ws.onmessage = (msg) => {
     }
     if (answer.type === "receive-message") {
         if (answer.conversation === currentConversation) {
-            showMessage(answer)
+            // showMessage(answer)
         }
     }
-    if (answer.type === "getUsers"){
+    if (answer.type === "getUsers") {
         console.log(answer.users)
         allUsers = answer.users
     }
@@ -116,6 +123,7 @@ document.getElementById("form-cancel-signup").addEventListener("click", () => {
     cancelForm(formularSignUp)
 })
 
+/*
 document.getElementById("btn-send").addEventListener("click", () => {
     if (user.length > 0) {
         ws.send(JSON.stringify({
@@ -126,7 +134,9 @@ document.getElementById("btn-send").addEventListener("click", () => {
         }));
     }
 })
+*/
 
+/*
 document.getElementById("log-out").addEventListener("click", () => {
     user = ""
     document.getElementById("signin").style.display = "block"
@@ -134,4 +144,4 @@ document.getElementById("log-out").addEventListener("click", () => {
     document.getElementById("log-out").style.display = "none"
     document.getElementById('groups').innerHTML = ""
     document.getElementById('AllMessages').innerHTML = ""
-})
+})*/

@@ -1,5 +1,9 @@
 :root{
     font-family: 'Open Sans', sans-serif;
+    font-size: 20px;
+    --background: white;
+    --sent-message-color: darkgray;
+    --received-message-color: lightgray;
 }
 
 html, body{
