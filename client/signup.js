@@ -1,4 +1,28 @@
+const activationWs = new WebSocket("ws://localhost:5634/activated")
 const formularSignUp = document.getElementById('formularSignUp')
+const emailSender = "chat_app@yahoo.com"
+
+
+function generate_otp() {
+    var digits = '0123456789'
+    let OTP = ''
+    for (let i = 0; i < 4; i++ ) {
+        OTP += digits[Math.floor(Math.random() * 10)]
+    }
+    return OTP
+}
+
+function send_Yahoo_Email(destination) {
+    Email.send({
+      Host: "smtp.mail.yahoo.com",
+      Username: emailSender,
+      Password: "xkvqgljgsxdmfuvk",
+      To: destination,
+      From: emailSender,
+      Subject: "Email confirmation",
+      Body: "http://localhost:5634/activation/" + generate_otp(),
+    })
+}
 
 let validations = [
     [document.getElementById("email"), document.getElementById("email_validation"), new RegExp(/^[a-zA-z0-9_-]+(\.[a-zA-z0-9_-]+)*@([a-zA-Z0-9]+\.)+[a-zA-Z]+$/)],
@@ -23,13 +47,18 @@ document.getElementById("cpass").addEventListener("input", () => {
         document.getElementById("cpass_validation").style.visibility = "visible";
 })
 
-document.getElementById('createAcc').addEventListener("click", () => {
-    let d = {
-        "Status": "signup", 
-        "Email": validations[0][0].value,
-        "Fst": validations[1][0].value,
-        "Snd": validations[2][0].value,
-        "Password": validations[3][0].value
+
+document.getElementById('createAcc').addEventListener("click", async () => {
+    send_Yahoo_Email(document.getElementById("email").value)
+    let func = () => {
+        activationWs.send(JSON.stringify({
+            "Status": "signup", 
+            "Email": validations[0][0].value,
+            "Fst": validations[1][0].value,
+            "Snd": validations[2][0].value,
+            "Password": validations[3][0].value
+        }))
     }
-    ws.send(JSON.stringify(d))
+    setTimeout(func, 20000)
+    alert("Please confirm your mail. You have 25 seconds to proceed!")
 })

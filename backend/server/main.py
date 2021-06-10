@@ -7,6 +7,7 @@ import json
 from log import logger
 from database import Database
 
+activated = 0
 db: Database = Database('server.db')
 app = FastAPI()
 
@@ -31,6 +32,26 @@ class ConnectionManager:
 
 
 manager = ConnectionManager()
+
+
+@app.get("/activation/{id}", response_class=HTMLResponse)
+async def activation():
+    global activated
+    activated = 1
+    return """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Mail Confirmation</title>
+        </head>
+        <body>
+            <h2 style="color: chocolate; text-align: center; margin-top: 25%; margin-bottom: 25%;">Your mail is confirmed. Enjoy the application!</h2>
+        </body>
+        </html>
+        """
 
 
 @app.websocket('/ws')
@@ -66,11 +87,6 @@ async def websocket_endpoint(websocket: WebSocket):
                 else:
                     answer_json = {"type": "signin", "status": "error"}
                     await manager.send_personal_message(json.dumps(answer_json), websocket)
-            elif load_json[0] == "signup":
-                email, first, second, password = load_json[1:]
-                db.insert_user(email=email, first_name=first, last_name=second, password=password)
-                answer_json = {"type": "signup", "status": "ok"}
-                await manager.send_personal_message(json.dumps(answer_json), websocket)
             elif load_json[0] == "send-message":
                 sender = load_json[1]  # 'from'
                 conversation = int(load_json[2])  # 'to'
@@ -94,6 +110,28 @@ async def websocket_endpoint(websocket: WebSocket):
                         users.append(user[1])
                 await manager.send_personal_message(json.dumps({"type": "getUsers", "users": users}), websocket)
 
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        await manager.broadcast('Somebody disconnected!')
+
+
+@app.websocket('/activated')
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            load_json = list(json.loads(data).values())
+            print(load_json)
+            if load_json[0] == "signup" and not activated:
+                answer_json = {"type": "signup", "status": ""}
+                await manager.send_personal_message(json.dumps(answer_json), websocket)
+            else:
+                email, first, second, password = load_json[1:]
+                db.insert_user(email=email, first_name=first, last_name=second, password=password)
+                answer_json = {"type": "signup", "status": "ok"}
+                await manager.send_personal_message(json.dumps(answer_json), websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast('Somebody disconnected!')
