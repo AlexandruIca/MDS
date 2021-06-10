@@ -55,16 +55,16 @@ function showMessages(groups) {
         if (i === 0) {
             currentConversation.id = group.groupId
             currentConversation.name = group.groupName
+
+            for (let j = 0; j < group.messages.length; ++j) {
+                showMessage(group.messages[j])
+            }
         }
 
         let groupsElem = document.getElementById('contacts')
         let newGroup = document.createElement('button')
         newGroup.innerText = group.groupName
         groupsElem.appendChild(newGroup)
-
-        for (let j = 0; j < group.messages.length; ++j) {
-            showMessage(group.messages[j])
-        }
     }
 
     document.querySelector('#chatInfo > b').innerText = currentConversation.name
