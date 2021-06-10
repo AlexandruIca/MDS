@@ -48,7 +48,8 @@ body {
                 align-items: center;}
                 #writeArea input {
                     height: 1.5rem;
-                    flex: 1;}
+                    flex: 1;
+                    border: 1px solid black;}
                 #writeArea svg {
                     display: block;
                     width: 1.5rem;

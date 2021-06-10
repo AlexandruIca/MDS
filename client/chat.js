@@ -36,6 +36,7 @@ function showMessage(message) {
     }
 
     document.getElementById('messages').appendChild(msgDiv)
+    msgDiv.scrollIntoView(/* alignToTop: */ false)
 }
 
 function showMessages(groups) {
@@ -123,12 +124,19 @@ window.onload = function () {
 
 document.getElementById('btn-send').addEventListener('click', () => {
     if (user.email.length > 0) {
-        document.getElementById('write').text
+        messageInput = document.getElementById('write')
         this.send({
             'type': 'send-message',
             'from': user.email,
             'to': currentConversation.id,
-            'text': document.getElementById('write').value
+            'text': messageInput.value
         })
+        messageInput.value = ''
+    }
+})
+
+document.getElementById('write').addEventListener('keyup', (event) => {
+    if (event.code === 'Enter') {
+        document.getElementById('btn-send').click()
     }
 })
