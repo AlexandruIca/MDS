@@ -52,7 +52,6 @@ function showMessages(groups) {
         groupsElem.appendChild(newGroup)
 
         for (let j = 0; j < group.messages.length; ++j) {
-            console.log(group.messages[j])
             showMessage(group.messages[j])
         }
     }
