@@ -22,7 +22,7 @@ body {
     main {
         display: flex;
         flex: 1;}
-        #left {width: 10rem;}
+        #left {width: 15rem;}
             #contacts > button {
                 width: 100%;
                 display: block;
@@ -40,16 +40,19 @@ body {
                 justify-content: space-between;}
                 #chatInfo button, #chatInfo b {padding: .3rem;}
             #messages {
-                height: calc(100vh - 1.76rem - 1.5rem);
+                height: calc(100vh - 1.76rem - 2.5rem);
                 padding: 2rem 1rem 0 1rem;
                 overflow-y: scroll;}
             #writeArea {
                 display: flex;
                 align-items: center;}
                 #writeArea input {
-                    height: 1.5rem;
+                    height: 2rem;
+                    margin-bottom: 0.5rem;
+                    margin-left: 0.5rem;
                     flex: 1;
-                    border: 1px solid black;}
+                    border: 1px solid black;
+                }
                 #writeArea svg {
                     display: block;
                     width: 1.5rem;
@@ -67,7 +70,7 @@ body {
     width: 100%;}
 #menu b {flex-grow: 1;}
 #menu div {
-    height: 1.5rem;
+    height: 3.0rem;
     display: flex;
     flex-direction: row;
     align-items: center;}

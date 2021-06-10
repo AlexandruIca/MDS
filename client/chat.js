@@ -31,6 +31,7 @@ function showMessage(message) {
     msgDate.innerText = message.date
 
     msgDiv.setAttribute('data-messageId', message.id.toString())
+    msgDiv.setAttribute('data-senderEmail', message.sender_email)
     msgDiv.appendChild(msgUser)
     msgDiv.appendChild(msgContent)
     msgDiv.appendChild(dateSeparator)
@@ -53,6 +54,7 @@ function showMessages(groups) {
 
         if (i === 0) {
             currentConversation.id = group.groupId
+            currentConversation.name = group.groupName
         }
 
         let groupsElem = document.getElementById('contacts')
@@ -64,6 +66,8 @@ function showMessages(groups) {
             showMessage(group.messages[j])
         }
     }
+
+    document.querySelector('#chatInfo > b').innerText = currentConversation.name
 }
 
 this.send = function (message, callback) {
@@ -86,6 +90,14 @@ this.waitForConnection = function (callback, interval) {
     }
 };
 
+function getFormattedName(email, first_name, last_name) {
+    if (first_name.length === 0 && last_name.length === 0) {
+        return email
+    }
+
+    return `${first_name} ${last_name}`
+}
+
 window.onload = function () {
     if (window.localStorage.getItem('mds_password') !== null) {
         this.send({
@@ -103,6 +115,8 @@ window.onload = function () {
                     user.email = window.localStorage.getItem('mds_email')
                     user.first_name = answer.first_name
                     user.last_name = answer.last_name
+                    document.querySelector('#menu > div > b').innerText = getFormattedName(
+                        user.email, user.first_name, user.last_name)
                     showMessages(answer.groups)
                     this.send({ "type": "users", "except": user.email })
                 } else {
