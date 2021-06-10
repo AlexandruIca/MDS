@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 
@@ -15,6 +15,7 @@ app = FastAPI()
 class ConnectionManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
+        self.active_users: Dict[int, List[WebSocket]] = {}
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
@@ -23,12 +24,31 @@ class ConnectionManager:
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
 
+        for user in self.active_users:
+            if websocket in self.active_users[user]:
+                self.active_users[user].remove(websocket)
+
     async def send_personal_message(self, message: str, websocket: WebSocket):
         await websocket.send_text(message)
 
     async def broadcast(self, message: str):
         for connection in self.active_connections:
             await connection.send_text(message)
+
+    def add_active_user(self, user_id: int, websocket: WebSocket):
+        if user_id not in self.active_users:
+            self.active_users[user_id] = []
+
+        self.active_users[user_id].append(websocket)
+
+    async def send_to_relevant_users(self, conv_id: int, data: str):
+        for user_list in db.get_users_for_group(conv_id):
+            user: int = int(user_list[0])
+            if user not in self.active_users:
+                continue
+
+            for connection in self.active_users[user]:
+                await self.send_personal_message(data, connection)
 
 
 manager = ConnectionManager()
@@ -64,7 +84,6 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await websocket.receive_text()
             load_json = list(json.loads(data).values())
-            print(load_json)
             if load_json[0] == "signin":
                 email, password = load_json[1:]
                 if db.check_user(email, password):
@@ -85,6 +104,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         convos = db.get_group_info(group)
                         answer_json["groups"].append(convos)
 
+                    manager.add_active_user(user_id, websocket)
                     await manager.send_personal_message(json.dumps(answer_json), websocket)
                 else:
                     answer_json = {"type": "signin", "status": "error"}
@@ -110,7 +130,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     "text": text,
                     "date": msg_date,
                 }
-                await manager.send_personal_message(json.dumps(answer), websocket)
+                await manager.send_to_relevant_users(conversation, json.dumps(answer))
             elif load_json[0] == "users":
                 users = []
                 for user in db.each_user():

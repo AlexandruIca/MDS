@@ -207,6 +207,18 @@ class Database:
 
         return (message_id, message_date)
 
+    def get_users_for_group(self, group_id: int) -> Any:
+        cursor: Cursor = self.db.cursor()
+
+        return cursor.execute('''
+        SELECT
+            user_id
+        FROM
+            participants
+        WHERE
+            group_id = ?
+        ''', (group_id,))
+
     def each_user(self) -> Any:
         cursor: Cursor = self.db.cursor()
 
