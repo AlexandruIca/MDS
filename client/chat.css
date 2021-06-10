@@ -51,11 +51,12 @@ body {
                     margin-bottom: 0.5rem;
                     margin-left: 0.5rem;
                     flex: 1;
-                    border: 1px solid black;
-                }
+                    border: 1px solid black;}
+                #writeArea button {
+                    cursor: pointer;}
                 #writeArea svg {
                     display: block;
-                    width: 1.5rem;
+                    width: 2.0rem;
                     padding: .2rem;}
 
 #chatInfo {background-color: lightgray;}
@@ -74,6 +75,8 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;}
+#menu button {
+    cursor: pointer;}
 #menu svg {
     width: 1.5rem;
     height: 1.5rem;}

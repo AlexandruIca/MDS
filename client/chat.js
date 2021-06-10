@@ -142,18 +142,23 @@ window.onload = function () {
             }
         };
     }
+    else {
+        window.location.replace('./index.html')
+    }
 }
 
 document.getElementById('btn-send').addEventListener('click', () => {
     if (user.email.length > 0) {
         messageInput = document.getElementById('write')
-        this.send({
-            'type': 'send-message',
-            'from': user.email,
-            'to': currentConversation.id,
-            'text': messageInput.value
-        })
-        messageInput.value = ''
+        if (messageInput.value.length > 0) {
+            this.send({
+                'type': 'send-message',
+                'from': user.email,
+                'to': currentConversation.id,
+                'text': messageInput.value
+            })
+            messageInput.value = ''
+        }
     }
 })
 
@@ -161,4 +166,10 @@ document.getElementById('write').addEventListener('keyup', (event) => {
     if (event.code === 'Enter') {
         document.getElementById('btn-send').click()
     }
+})
+
+document.getElementById('btn-logout').addEventListener('click', () => {
+    window.localStorage.removeItem('mds_email')
+    window.localStorage.removeItem('mds_password')
+    window.location.replace('./index.html')
 })
