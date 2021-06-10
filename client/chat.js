@@ -20,12 +20,20 @@ function showMessage(message) {
     let msgContent = document.createElement('p')
     msgContent.innerText = message.text
 
+    let dateSeparator = document.createElement('hr')
+    dateSeparator.style.display = 'block'
+    dateSeparator.style.width = '100%'
+    dateSeparator.style.height = '1px'
+    dateSeparator.style.backgroundColor = 'black'
+    dateSeparator.style.marginTop = '2px'
+
     let msgDate = document.createElement('i')
     msgDate.innerText = message.date
 
     msgDiv.setAttribute('data-messageId', message.id.toString())
     msgDiv.appendChild(msgUser)
     msgDiv.appendChild(msgContent)
+    msgDiv.appendChild(dateSeparator)
     msgDiv.appendChild(msgDate)
 
     if (message.sender_email !== user.email) {
