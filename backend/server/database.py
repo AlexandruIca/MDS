@@ -176,7 +176,8 @@ class Database:
 
         return info
 
-    def insert_message(self, sender_id: int, conversation_id: int, text: str):
+    # returns: message_id + message_date
+    def insert_message(self, sender_id: int, conversation_id: int, text: str) -> Tuple[int, str]:
         cursor: Cursor = self.db.cursor()
 
         cursor.execute('''
@@ -190,7 +191,7 @@ class Database:
                 file_id
             )
         VALUES (
-            date('now'),
+            datetime('now'),
             ?,
             ?,
             0,
@@ -198,6 +199,13 @@ class Database:
             NULL
         )
         ''', (conversation_id, sender_id, text))
+
+        message_id = int(cursor.lastrowid)
+        message_date = cursor.execute('''
+            SELECT date_ FROM messages WHERE message_id = ?
+        ''', (message_id,)).fetchone()[0]
+
+        return (message_id, message_date)
 
     def each_user(self) -> Any:
         cursor: Cursor = self.db.cursor()

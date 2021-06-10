@@ -11,6 +11,33 @@ ws.onclose = function () {
     console.log('Websocket closed!')
 }
 
+function showMessage(message) {
+    let msgDiv = document.createElement('div')
+
+    let msgUser = document.createElement('b')
+    msgUser.innerText = message.sender_name;
+
+    let msgContent = document.createElement('p')
+    msgContent.innerText = message.text
+
+    let msgDate = document.createElement('i')
+    msgDate.innerText = message.date
+
+    msgDiv.setAttribute('data-messageId', message.id.toString())
+    msgDiv.appendChild(msgUser)
+    msgDiv.appendChild(msgContent)
+    msgDiv.appendChild(msgDate)
+
+    if (message.sender_email !== user.email) {
+        msgDiv.className = 'message received'
+    }
+    else {
+        msgDiv.className = 'message sent'
+    }
+
+    document.getElementById('messages').appendChild(msgDiv)
+}
+
 function showMessages(groups) {
     for (let i = 0; i < groups.length; ++i) {
         let group = groups[i]
@@ -25,47 +52,10 @@ function showMessages(groups) {
         groupsElem.appendChild(newGroup)
 
         for (let j = 0; j < group.messages.length; ++j) {
-            let message = group.messages[j]
-            let allMessages = document.getElementById('messages')
-            let msgDiv = document.createElement('div')
-
-            let msgUser = document.createElement('b')
-            msgUser.innerText = message.sender_name;
-
-            let msgContent = document.createElement('p')
-            msgContent.innerText = message.text
-
-            let msgDate = document.createElement('i')
-            msgDate.innerText = message.date
-
-            msgDiv.appendChild(msgUser)
-            msgDiv.appendChild(msgContent)
-            msgDiv.appendChild(msgDate)
-
-            if (message.sender_email !== user.email) {
-                msgDiv.className = 'message received'
-            }
-            else {
-                msgDiv.className = 'message sent'
-            }
-
-            allMessages.appendChild(msgDiv)
+            console.log(group.messages[j])
+            showMessage(group.messages[j])
         }
     }
-}
-
-function showMessage(message) {
-    let newMessage = document.createElement('div')
-    newMessage.innerText = message.text
-
-    if (message.sender_name !== user.email) {
-        newMessage.className = 'message received'
-    }
-    else {
-        newMessage.className = 'message sent'
-    }
-
-    document.getElementById('messages').appendChild(newMessage)
 }
 
 this.send = function (message, callback) {
@@ -120,7 +110,7 @@ window.onload = function () {
                 }
             }
             if (answer.type === "receive-message") {
-                if (answer.conversation === currentConversation) {
+                if (answer.conversation === currentConversation.id) {
                     showMessage(answer)
                 }
             }
@@ -131,3 +121,15 @@ window.onload = function () {
         };
     }
 }
+
+document.getElementById('btn-send').addEventListener('click', () => {
+    if (user.email.length > 0) {
+        document.getElementById('write').text
+        this.send({
+            'type': 'send-message',
+            'from': user.email,
+            'to': currentConversation.id,
+            'text': document.getElementById('write').value
+        })
+    }
+})

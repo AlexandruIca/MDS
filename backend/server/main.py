@@ -92,15 +92,19 @@ async def websocket_endpoint(websocket: WebSocket):
                 conversation = int(load_json[2])  # 'to'
                 text = load_json[3]  # 'text'
                 user_id = db.get_id_for_user(sender)
-                user_email = db.get_user_info(user_id)[0]
-                db.insert_message(user_id, conversation, text)
+                user_email, first_name, last_name = db.get_user_info(user_id)
+                (msg_id, msg_date) = db.insert_message(user_id, conversation, text)
+                user_name = user_email if not first_name or not last_name else f'{first_name} {last_name}'
 
                 answer = {
                     "type": "receive-message",
                     "conversation": conversation,
+                    "id": msg_id,
                     "sender": user_id,
                     "sender_email": user_email,
-                    "text": text
+                    "sender_name": user_name,
+                    "text": text,
+                    "date": msg_date,
                 }
                 await manager.send_personal_message(json.dumps(answer), websocket)
             elif load_json[0] == "users":
