@@ -123,14 +123,6 @@ window.onload = function () {
                     alert("Autentificare nereusita!")
                 }
             }
-            if (answer.type === "signup") {
-                if (answer.status === "ok") {
-                    //cancelForm(formularSignUp)
-                }
-                else {
-                    alert("Contul nu a putut fi creat!")
-                }
-            }
             if (answer.type === "receive-message") {
                 if (answer.conversation === currentConversation.id) {
                     showMessage(answer)
