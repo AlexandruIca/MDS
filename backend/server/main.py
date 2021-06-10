@@ -48,7 +48,9 @@ async def activation():
             <title>Mail Confirmation</title>
         </head>
         <body>
-            <h2 style="color: chocolate; text-align: center; margin-top: 25%; margin-bottom: 25%;">Your mail is confirmed. Enjoy the application!</h2>
+            <h2 style="color: chocolate; text-align: center; margin-top: 25%; margin-bottom: 25%;">
+                Your mail is confirmed. Enjoy the application!
+            </h2>
         </body>
         </html>
         """
@@ -94,7 +96,9 @@ async def websocket_endpoint(websocket: WebSocket):
                 user_id = db.get_id_for_user(sender)
                 user_email, first_name, last_name = db.get_user_info(user_id)
                 (msg_id, msg_date) = db.insert_message(user_id, conversation, text)
-                user_name = user_email if not first_name or not last_name else f'{first_name} {last_name}'
+                user_name = user_email\
+                    if not first_name or not last_name\
+                    else f'{first_name} {last_name}'
 
                 answer = {
                     "type": "receive-message",
@@ -112,7 +116,10 @@ async def websocket_endpoint(websocket: WebSocket):
                 for user in db.each_user():
                     if user != load_json[1]:
                         users.append(user[1])
-                await manager.send_personal_message(json.dumps({"type": "getUsers", "users": users}), websocket)
+                await manager.send_personal_message(json.dumps({
+                    "type": "getUsers",
+                    "users": users
+                }), websocket)
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)
@@ -120,7 +127,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 @app.websocket('/activated')
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_activation_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
 
     try:
