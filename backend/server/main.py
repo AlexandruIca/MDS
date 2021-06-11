@@ -160,9 +160,13 @@ async def websocket_activation_endpoint(websocket: WebSocket):
                 await manager.send_personal_message(json.dumps(answer_json), websocket)
             else:
                 email, first, second, password = load_json[1:]
-                db.insert_user(email=email, first_name=first, last_name=second, password=password)
-                answer_json = {"type": "signup", "status": "ok"}
-                await manager.send_personal_message(json.dumps(answer_json), websocket)
+                if not db.check_user(email, password):
+                    db.insert_user(email=email, first_name=first, last_name=second, password=password)
+                    answer_json = {"type": "signup", "status": "ok"}
+                    await manager.send_personal_message(json.dumps(answer_json), websocket)
+                else:
+                    answer_json = {"type": "signup", "status": ""}
+                    await manager.send_personal_message(json.dumps(answer_json), websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast('Somebody disconnected!')
