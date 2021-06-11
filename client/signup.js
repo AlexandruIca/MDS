@@ -3,10 +3,22 @@ const formularSignUp = document.getElementById('formularSignUp')
 const emailSender = "chat_app@yahoo.com"
 
 
+activationWs.onmessage = (msg) => {   
+    answer = JSON.parse(msg.data) 
+    if (answer.type === "signup") {
+        if (answer.status === "ok") {
+            cancelForm(formularSignUp)
+        }
+        else {
+            alert("Your account couldn't be created!")
+        }
+    }
+}
+
 function generate_otp() {
     var digits = '0123456789'
     let OTP = ''
-    for (let i = 0; i < 4; i++ ) {
+    for (let i = 0; i < 4; i++) {
         OTP += digits[Math.floor(Math.random() * 10)]
     }
     return OTP
