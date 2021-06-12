@@ -22,16 +22,3 @@ document.getElementById("logAcc").addEventListener("click", () => {
         ws.send(JSON.stringify(d))
     }
 })
-
-/*
-searchUser.addEventListener("input", () => {
-    usersDiv.innerText = ""
-
-    allUsers.forEach(i => {
-        if (i.includes(searchUser.value)){
-            newUser = document.createElement("div")
-            newUser.innerText = i
-            usersDiv.appendChild(newUser)
-        }
-    })
-})*/

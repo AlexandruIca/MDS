@@ -2,6 +2,8 @@ var ws = new WebSocket("ws://localhost:5634/ws")
 var allUsers = []
 var user = { id: 0, email: "", first_name: "", last_name: "" }
 var currentConversation = { id: 0, name: "" }
+const usersDiv = document.getElementById('contacts')
+const searchUser = document.getElementById('s_group')
 
 ws.onopen = function () {
     console.log('Websocket opened!')
@@ -69,6 +71,19 @@ function showMessages(groups) {
 
     document.querySelector('#chatInfo > b').innerText = currentConversation.name
 }
+
+
+searchUser.addEventListener("input", () => {
+    usersDiv.innerText = ""
+
+    allUsers.forEach(i => {
+        if (i.includes(searchUser.value)){
+            newUser = document.createElement("div")
+            newUser.innerText = i
+            usersDiv.appendChild(newUser)
+        }
+    })
+})
 
 this.send = function (message, callback) {
     this.waitForConnection(function () {
