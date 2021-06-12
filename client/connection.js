@@ -74,6 +74,14 @@ ws.onmessage = (msg) => {
             alert("Autentificare nereusita!")
         }
     }
+    if (answer.type === "signup") {
+        if (answer.status === "ok") {
+            cancelForm(formularSignUp)
+        }
+        else {
+            alert("Contul nu a putut fi creat!")
+        }
+    }
     if (answer.type === "receive-message") {
         if (answer.conversation === currentConversation) {
             // showMessage(answer)
@@ -85,35 +93,20 @@ ws.onmessage = (msg) => {
     }
 }
 
-
-showForm = function (formular) {
-    formular.style.visibility = "visible"
-    formular.style.width = "100%"
-    formular.style.height = "100%"
-    formular.style.display = "grid"
-    formular.style.gridTemplateColumns = "auto auto"
-    formular.style.backgroundColor = "rgba(0, 0, 0, 0.6)"
-}
-
-cancelForm = function (formular) {
-    formular.style.visibility = "hidden"
-    formular.style.display = "none"
-}
-
 document.getElementById("signin").addEventListener("click", () => {
-    showForm(formularSignIn)
+    formularSignIn.style.display = "grid"
 })
 
 document.getElementById("signup").addEventListener("click", () => {
-    showForm(formularSignUp)
+    formularSignUp.style.display = "grid"
 })
 
 document.getElementById("form-cancel-signin").addEventListener("click", () => {
-    cancelForm(formularSignIn)
+    formularSignIn.style.display = "none"
 })
 
 document.getElementById("form-cancel-signup").addEventListener("click", () => {
-    cancelForm(formularSignUp)
+    formularSignUp.style.display = "none"
 })
 
 /*

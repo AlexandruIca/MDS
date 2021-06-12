@@ -12,37 +12,15 @@
     <link rel="stylesheet" href="formular.css">
     <script src="connection.js" defer></script>
     <script src="https://smtpjs.com/v3/smtp.js"></script>
+    <script src="./signin.js" defer></script>
+    <script src="./signup.js" defer></script>
 </head>
 
 <body>
-    <div id="navbar">
+    <nav>
         <button id="signin">Sign In</button>
         <button id="signup">Sign Up</button>
-        <!-- <button id="log-out">Log out</button> -->
-    </div>
-
-    <!--
-    <div id="chat-body">
-        <input type="text" id="search-user">
-        <div id="show-users"></div>
-        <div id="groups">
-            <h2>Chat</h2>
-        </div>
-        <div class="conversation">
-            <div id="AllMessages">
-            </div>
-            <div id="SendSection">
-                <input id="send-message" type="text">
-                <button id="btn-send">
-                    <svg id="sendBtn" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-                        <path
-                            d="M0,9l4,1.5L6,16l2.861-3.82L14,14l2-14L0,9z M7.169,11.44l-0.916,2.485l-1.086-3.118l8.402-7.631L7.169,11.44z" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-    -->
+    </nav>
 
     <div id="formularSignIn">
         <h2>Sign in</h2>
@@ -52,7 +30,7 @@
         <label for="passLog">Password:</label>
         <input id="passLog" name="pass" type="password">
 
-        <div id="form-signin-btn">
+        <div class="buttons">
             <button id="logAcc">Sign in</button>
             <button id="form-cancel-signin" style="background-color: rgb(250, 25, 0);">Cancel</button>
         </div>
@@ -61,33 +39,41 @@
     <div id="formularSignUp">
         <h2>Sign up</h2>
         <label for="email">Email:</label>
-        <input id="email" name="email" type="email">
-        <p id="email_validation">Invalid email</p>
+        <div>
+            <input id="email" name="email" type="email">
+            <p id="email_validation">Invalid email</p>
+        </div>
 
         <label for="fst">First Name:</label>
-        <input id="fst" name="fst" type="text">
-        <p id="fst_validation">Invalid name</p>
+        <div>
+            <input id="fst" name="fst" type="text">
+            <p id="fst_validation">Invalid name</p>
+        </div>
 
         <label for="snd">Last Name:</label>
-        <input id="snd" name="snd" type="text">
-        <p id="snd_validation">Invalid name</p>
+        <div>
+            <input id="snd" name="snd" type="text">
+            <p id="snd_validation">Invalid name</p>
+        </div>
 
         <label for="pass">Password:</label>
-        <input id="pass" name="pass" type="password">
-        <p id="pass_validation">Invalid password</p>
+        <div>
+            <input id="pass" name="pass" type="password">
+            <p id="pass_validation">Invalid password</p>
+        </div>
 
         <label for="cpass">Confirm Password:</label>
-        <input id="cpass" name="cpass" type="password">
-        <p id="cpass_validation">Passwords don't match</p>
+        <div>
+            <input id="cpass" name="cpass" type="password">
+            <p id="cpass_validation">Passwords don't match</p>
+        </div>
 
-        <div id="form-signup-btn">
+        <div class="buttons">
             <button id="createAcc">Sign up</button>
             <button id="form-cancel-signup" style="background-color: red;">Cancel</button>
         </div>
     </div>
 
-    <script src="./signin.js" defer></script>
-    <script src="./signup.js" defer></script>
 </body>
 
 </html>
