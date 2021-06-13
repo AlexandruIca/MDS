@@ -122,8 +122,15 @@ class Database:
         cursor.execute(query, (name_conv,))
         last_id = int(cursor.lastrowid)
 
-        query: str = '''INSERT INTO participants(group_id, user_id, joined_on) VALUES (?, ?,  datetime('now')), 
-                                                                                      (?, ?,  datetime('now'))'''
+        query: str = '''
+        INSERT INTO
+            participants(
+                group_id, user_id, joined_on
+            )
+        VALUES (?, ?,  datetime('now')),
+               (?, ?,  datetime('now'))
+        '''
+
         cursor.execute(query, [last_id, int(me), last_id, int(to)])
         self.db.commit()
         return [last_id, name_conv]
@@ -257,7 +264,7 @@ class Database:
         VALUES (?)
         ''', (file,))
 
-        conv_id = int(cursor.lastrowid) 
+        conv_id = int(cursor.lastrowid)
         sender_id = self.get_id_for_user(email)
         cursor.execute('''
         INSERT INTO
@@ -287,7 +294,6 @@ class Database:
         self.db.commit()
         return file, message_id, sender_id, message_date
 
-
     def get_users_for_group(self, group_id: int) -> Any:
         cursor: Cursor = self.db.cursor()
 
@@ -311,7 +317,7 @@ class Database:
         cursor.execute('''
         UPDATE
             messages
-        SET 
+        SET
             mess_text = '(Message deleted)'
         WHERE
             message_id = ?
@@ -326,4 +332,3 @@ class Database:
             message_id = ?
         ''', (id_mess,))
         return int(cursor.lastrowid)
-

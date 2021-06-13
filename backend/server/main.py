@@ -145,15 +145,20 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 id_talker = db.get_id_for_user(email_talker)
                 id_conv, name = db.insert_conv(id_sender, id_talker, nume_conv)
-                await manager.send_to_relevant_users(id_conv,
-                                                     json.dumps({"type": "start-conv", "id": id_conv, "name": name}))
+                await manager.send_to_relevant_users(
+                    id_conv, json.dumps({
+                        "type": "start-conv", "id": id_conv, "name": name
+                    }))
             elif load_json[0] == "get-messages":
                 id_conv = load_json[1]
                 lst = db.get_messages_for_group(id_conv)
-                await manager.send_personal_message(json.dumps({"type": "load-mess", "mess": lst}), websocket)
+                await manager.send_personal_message(json.dumps({
+                    "type": "load-mess", "mess": lst
+                }), websocket)
             elif load_json[0] == "attachment":
                 email, conversation, data = load_json[1:]
-                message_id, file_data, sender_id, message_date = db.insert_file(email, conversation, data)
+                message_id, file_data, sender_id, message_date = db.insert_file(
+                    email, conversation, data)
                 await manager.send_to_relevant_users(conversation, json.dumps({
                     "type": "receive-message",
                     "conversation": conversation,
@@ -194,7 +199,8 @@ async def websocket_activation_endpoint(websocket: WebSocket):
             else:
                 email, first, second, password = load_json[1:]
                 if not db.check_user(email, password):
-                    db.insert_user(email=email, first_name=first, last_name=second, password=password)
+                    db.insert_user(email=email, first_name=first,
+                                   last_name=second, password=password)
                     answer_json = {"type": "signup", "status": "ok"}
                     await manager.send_personal_message(json.dumps(answer_json), websocket)
                 else:
