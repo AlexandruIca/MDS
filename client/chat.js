@@ -2,7 +2,7 @@ var ws = new WebSocket("ws://localhost:5634/ws")
 var allUsers = []
 var user = { id: 0, email: "", first_name: "", last_name: "" }
 var currentConversation = { id: 0, name: "" }
-const usersDiv = document.getElementById('contacts')
+const usersDiv = document.getElementById('search_users')
 const searchUser = document.getElementById('s_group')
 
 ws.onopen = function () {
@@ -50,6 +50,7 @@ function showMessage(message) {
     msgDiv.scrollIntoView(/* alignToTop: */ false)
 }
 
+
 function showMessages(groups) {
     for (let i = 0; i < groups.length; ++i) {
         let group = groups[i]
@@ -66,23 +67,44 @@ function showMessages(groups) {
         let groupsElem = document.getElementById('contacts')
         let newGroup = document.createElement('button')
         newGroup.innerText = group.groupName
+        newGroup.setAttribute("data-conversationId", groups[i].groupId)
+        newGroup.addEventListener("click", () => {
+            let messages = document.getElementById("messages")
+            messages.innerHTML = ""
+            newGroup.innerHTML = groups[i].groupName
+            currentConversation.id = groups[i].groupId
+            currentConversation.name = groups[i].groupName
+            document.querySelector('#chatInfo > b').innerText = currentConversation.name
+            this.send({"type": "get-messages", "idConv": currentConversation.id})
+        })
         groupsElem.appendChild(newGroup)
     }
-
     document.querySelector('#chatInfo > b').innerText = currentConversation.name
 }
 
+function getUserName(mail){
+    return mail.substring(0, mail.indexOf("@"))
+}
 
 searchUser.addEventListener("input", () => {
+    usersDiv.style.display = "block"
     usersDiv.innerText = ""
 
     allUsers.forEach(i => {
-        if (i.includes(searchUser.value)){
-            newUser = document.createElement("div")
+        if (i.includes(searchUser.value) && i !== user.email){
+            newUser = document.createElement("button")
             newUser.innerText = i
+            newUser.style = "cursor: pointer"
+            newUser.setAttribute('data-userEmail', newUser.innerText)
+            newUser.addEventListener('click', (e) => {
+                this.send({"type": "start-conv", "me": user.id, "with": e.target.dataset.useremail, "name": `${getUserName(e.target.dataset.useremail)}_${getUserName(user.email)}`})
+            })
             usersDiv.appendChild(newUser)
         }
     })
+    if (searchUser.value === ""){
+        usersDiv.style.display = "none"
+    }
 })
 
 this.send = function (message, callback) {
@@ -111,6 +133,22 @@ function getFormattedName(email, first_name, last_name) {
     }
 
     return `${first_name} ${last_name}`
+}
+
+function printConv(data){
+    conv_name_btn = document.createElement('button')
+    conv_name_btn.innerText = data.name
+    conv_name_btn.setAttribute("data-conversationId", data.id)
+    document.getElementById('contacts').appendChild(conv_name_btn)    
+
+    conv_name_btn.addEventListener('click', () => {
+        let messages = document.getElementById("messages")
+        messages.innerHTML = ""
+        currentConversation.id = data.id
+        currentConversation.name = data.name
+        document.querySelector('#chatInfo > b').innerText = currentConversation.name
+        this.send({"type": "get-messages", "idConv": currentConversation.id})
+    })
 }
 
 window.onload = function () {
@@ -142,10 +180,24 @@ window.onload = function () {
                 if (answer.conversation === currentConversation.id) {
                     showMessage(answer)
                 }
+                else{
+                    boldd = document.createElement('b')
+                    boldd.innerText = "*"
+                    boldd.style.color = "red"
+                    document.querySelector(`#contacts > button[data-conversationId="${answer.conversation}"]`).appendChild(boldd)
+                }
             }
             if (answer.type === "getUsers") {
                 console.log(answer.users)
                 allUsers = answer.users
+            }
+            if(answer.type === "start-conv"){
+                printConv(answer)
+            }
+            if(answer.type === "load-mess"){
+                for(let i = 0; i < answer.mess.length; i++){
+                    showMessage(answer.mess[i])
+                }
             }
         };
     }

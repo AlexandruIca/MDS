@@ -116,6 +116,18 @@ class Database:
 
         return cursor.execute(query, (user_id,)).fetchone()
 
+    def insert_conv(self, me, to, name_conv):
+        cursor: Cursor = self.db.cursor()
+        query: str = 'INSERT INTO groups(group_name, is_dm) VALUES (?, 1)'
+        cursor.execute(query, (name_conv,))
+        last_id = int(cursor.lastrowid)
+
+        query: str = '''INSERT INTO participants(group_id, user_id, joined_on) VALUES (?, ?,  datetime('now')), 
+                                                                                      (?, ?,  datetime('now'))'''
+        cursor.execute(query, [last_id, int(me), last_id, int(to)])
+        self.db.commit()
+        return [last_id, name_conv]
+
     def get_groups_for_user(self, user_id: int) -> int:
         cursor: Cursor = self.db.cursor()
         query: str = '''
@@ -129,6 +141,36 @@ class Database:
 
         for row in cursor.execute(query, (user_id,)):
             yield int(row[0])
+
+    def get_messages_for_group(self, group_id):
+        cursor: Cursor = self.db.cursor()
+        query: str = '''
+               SELECT
+                   message_id, date_, conv_id, sender_id, reply, mess_text
+               FROM
+                   messages
+               WHERE
+                   conv_id = ?
+               '''
+        rez = []
+        for msg in cursor.execute(query, (int(group_id),)):
+            sender_id = int(msg[3])
+            (email, first_name, last_name) = self.get_user_info(sender_id)
+            sender_name_format = f'{first_name} {last_name}'
+            sender_name = sender_name_format if len(sender_name_format) > 0 else email
+
+            rez.append({
+                'id': msg[0],
+                'date': msg[1],
+                'conversation_id': msg[2],
+                'sender_id': sender_id,
+                'sender_email': email,
+                'sender_name': sender_name,
+                'is_reply': msg[4],
+                'text': msg[5],
+            })
+
+        return rez
 
     def get_group_info(self, group_id: int) -> Any:
         info = {}
@@ -200,12 +242,13 @@ class Database:
         )
         ''', (conversation_id, sender_id, text))
 
+        self.db.commit()
         message_id = int(cursor.lastrowid)
         message_date = cursor.execute('''
             SELECT date_ FROM messages WHERE message_id = ?
         ''', (message_id,)).fetchone()[0]
 
-        return (message_id, message_date)
+        return message_id, message_date
 
     def get_users_for_group(self, group_id: int) -> Any:
         cursor: Cursor = self.db.cursor()

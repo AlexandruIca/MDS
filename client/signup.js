@@ -71,6 +71,6 @@ document.getElementById('createAcc').addEventListener("click", async () => {
             "Password": validations[3][0].value
         }))
     }
-    setTimeout(func, 20000)
-    alert("Please confirm your mail. You have 25 seconds to proceed!")
+    setTimeout(func, 40000)
+    alert("Please confirm your mail. You have 40 seconds to proceed!")
 })

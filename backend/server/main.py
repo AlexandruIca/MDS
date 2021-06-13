@@ -116,8 +116,8 @@ async def websocket_endpoint(websocket: WebSocket):
                 user_id = db.get_id_for_user(sender)
                 user_email, first_name, last_name = db.get_user_info(user_id)
                 (msg_id, msg_date) = db.insert_message(user_id, conversation, text)
-                user_name = user_email\
-                    if not first_name or not last_name\
+                user_name = user_email \
+                    if not first_name or not last_name \
                     else f'{first_name} {last_name}'
 
                 answer = {
@@ -140,6 +140,17 @@ async def websocket_endpoint(websocket: WebSocket):
                     "type": "getUsers",
                     "users": users
                 }), websocket)
+            elif load_json[0] == "start-conv":
+                id_sender, email_talker, nume_conv = load_json[1:]
+
+                id_talker = db.get_id_for_user(email_talker)
+                id_conv, name = db.insert_conv(id_sender, id_talker, nume_conv)
+                await manager.send_to_relevant_users(id_conv,
+                                                     json.dumps({"type": "start-conv", "id": id_conv, "name": name}))
+            elif load_json[0] == "get-messages":
+                id_conv = load_json[1]
+                lst = db.get_messages_for_group(id_conv)
+                await manager.send_personal_message(json.dumps({"type": "load-mess", "mess": lst}), websocket)
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)
