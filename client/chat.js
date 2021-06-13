@@ -44,21 +44,24 @@ function showMessage(message) {
     msgDiv.appendChild(dateSeparator)
     msgDiv.appendChild(msgDate)
 
-    let deleteButton = document.createElement('button')
-    deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-    <line x1="4" y1="7" x2="20" y2="7" />
-    <line x1="10" y1="11" x2="10" y2="17" />
-    <line x1="14" y1="11" x2="14" y2="17" />
-    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-    </svg>`
-    
-    deleteButton.addEventListener("click", function(e) {
-        //console.log(e.target.parentElement.parentElement)
-        ws.send(JSON.stringify({"type": "delete-mess", "id-mess": e.target.parentElement.parentElement.dataset.messageid}))
-    })
-    msgDiv.appendChild(deleteButton)
+    if (message.sender_email === user.email && message.text !== '(Message deleted)') {
+        let deleteButton = document.createElement('button')
+        deleteButton.style.width = '30px'
+        deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                  <line x1="4" y1="7" x2="20" y2="7" />
+                                  <line x1="10" y1="11" x2="10" y2="17" />
+                                  <line x1="14" y1="11" x2="14" y2="17" />
+                                  <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                  <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                  </svg>`
+
+        deleteButton.addEventListener("click", function (e) {
+            //console.log(e.target.parentElement.parentElement)
+            ws.send(JSON.stringify({ "type": "delete-mess", "id-mess": e.target.parentElement.parentElement.dataset.messageid }))
+        })
+        msgDiv.appendChild(deleteButton)
+    }
 
     if (message.sender_email !== user.email) {
         msgDiv.className = 'message received'
@@ -96,14 +99,14 @@ function showMessages(groups) {
             currentConversation.id = groups[i].groupId
             currentConversation.name = groups[i].groupName
             document.querySelector('#chatInfo > b').innerText = currentConversation.name
-            this.send({"type": "get-messages", "idConv": currentConversation.id})
+            this.send({ "type": "get-messages", "idConv": currentConversation.id })
         })
         groupsElem.appendChild(newGroup)
     }
     document.querySelector('#chatInfo > b').innerText = currentConversation.name
 }
 
-function getUserName(mail){
+function getUserName(mail) {
     return mail.substring(0, mail.indexOf("@"))
 }
 
@@ -112,18 +115,18 @@ searchUser.addEventListener("input", () => {
     usersDiv.innerText = ""
 
     allUsers.forEach(i => {
-        if (i.includes(searchUser.value) && i !== user.email){
+        if (i.includes(searchUser.value) && i !== user.email) {
             newUser = document.createElement("button")
             newUser.innerText = i
             newUser.style = "cursor: pointer"
             newUser.setAttribute('data-userEmail', newUser.innerText)
             newUser.addEventListener('click', (e) => {
-                this.send({"type": "start-conv", "me": user.id, "with": e.target.dataset.useremail, "name": `${getUserName(e.target.dataset.useremail)}_${getUserName(user.email)}`})
+                this.send({ "type": "start-conv", "me": user.id, "with": e.target.dataset.useremail, "name": `${getUserName(e.target.dataset.useremail)}_${getUserName(user.email)}` })
             })
             usersDiv.appendChild(newUser)
         }
     })
-    if (searchUser.value === ""){
+    if (searchUser.value === "") {
         usersDiv.style.display = "none"
     }
 })
@@ -156,11 +159,11 @@ function getFormattedName(email, first_name, last_name) {
     return `${first_name} ${last_name}`
 }
 
-function printConv(data){
+function printConv(data) {
     conv_name_btn = document.createElement('button')
     conv_name_btn.innerText = data.name
     conv_name_btn.setAttribute("data-conversationId", data.id)
-    document.getElementById('contacts').appendChild(conv_name_btn)    
+    document.getElementById('contacts').appendChild(conv_name_btn)
 
     conv_name_btn.addEventListener('click', () => {
         let messages = document.getElementById("messages")
@@ -168,7 +171,7 @@ function printConv(data){
         currentConversation.id = data.id
         currentConversation.name = data.name
         document.querySelector('#chatInfo > b').innerText = currentConversation.name
-        this.send({"type": "get-messages", "idConv": currentConversation.id})
+        this.send({ "type": "get-messages", "idConv": currentConversation.id })
     })
 }
 
@@ -203,7 +206,7 @@ window.onload = function () {
                 if (answer.conversation === currentConversation.id) {
                     showMessage(answer)
                 }
-                else{
+                else {
                     boldd = document.createElement('b')
                     boldd.innerText = "*"
                     boldd.style.color = "red"
@@ -214,15 +217,15 @@ window.onload = function () {
                 console.log(answer.users)
                 allUsers = answer.users
             }
-            if(answer.type === "start-conv"){
+            if (answer.type === "start-conv") {
                 printConv(answer)
             }
-            if(answer.type === "load-mess"){
-                for(let i = 0; i < answer.mess.length; i++){
+            if (answer.type === "load-mess") {
+                for (let i = 0; i < answer.mess.length; i++) {
                     showMessage(answer.mess[i])
                 }
             }
-            if(answer.type === "delete-message") {
+            if (answer.type === "delete-message") {
                 console.log("asdafasdgasdgasdg")
                 console.log(answer)
                 document.querySelector(`#messages > div[data-messageId="${answer.messId}"] > p`).innerText = '(Message deleted)'
@@ -267,33 +270,33 @@ let f = document.getElementById('myfile')
 
 function uploadFile() {
     let file = f.files[0];
-  
+
     if (!file) {
-      return
+        return
     }
 
     if (file.size > 10000000) {
-      alert('File should be smaller than 1MB')
-      return
+        alert('File should be smaller than 1MB')
+        return
     }
-  
+
     var reader = new FileReader();
     var rawData = new ArrayBuffer();
-  
-    reader.onload = function(e) {
-      rawData = e.target.result;
-      console.log("Ceva");
-      ws.send ( {
-        type: 'attachment',
-        email: user.email,
-        conversation: currentConversation.id,
-        data: rawData
-        } , (result) => {
+
+    reader.onload = function (e) {
+        rawData = e.target.result;
+        console.log("Ceva");
+        ws.send({
+            type: 'attachment',
+            email: user.email,
+            conversation: currentConversation.id,
+            data: rawData
+        }, (result) => {
             alert("Server has received file!")
-      });
-      
-      alert("the File has been transferred.")
+        });
+
+        alert("the File has been transferred.")
     }
-  
+
     reader.readAsArrayBuffer(file);
-  }
+}

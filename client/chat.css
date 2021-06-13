@@ -89,6 +89,8 @@ body {
 #menu svg {
     width: 1.5rem;
     height: 1.5rem;}
+#menu input {
+    border: 1px solid black;}
 #menu button:hover,
 #right button:hover {
     opacity: 0.5;
