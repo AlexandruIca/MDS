@@ -154,7 +154,7 @@ async def websocket_endpoint(websocket: WebSocket):
             elif load_json[0] == "attachment":
                 email, conversation, data = load_json[1:]
                 message_id, file_data, sender_id, message_date = db.insert_file(email, conversation, data)
-                await manager.send_to_relevant_users(conversation, json.dumps( {
+                await manager.send_to_relevant_users(conversation, json.dumps({
                     "type": "receive-message",
                     "conversation": conversation,
                     "id": message_id,
@@ -164,6 +164,14 @@ async def websocket_endpoint(websocket: WebSocket):
                     "text": "",
                     "date": message_date,
                     "file": file_data
+                }))
+            elif load_json[0] == "delete-mess":
+                print(load_json)
+                idMess = int(load_json[1])
+                conv_id = db.deleteMess(idMess)
+                await manager.send_to_relevant_users(conv_id, json.dumps({
+                    "type": "delete-message",
+                    "messId": idMess
                 }))
 
     except WebSocketDisconnect:

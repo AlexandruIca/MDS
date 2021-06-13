@@ -44,6 +44,22 @@ function showMessage(message) {
     msgDiv.appendChild(dateSeparator)
     msgDiv.appendChild(msgDate)
 
+    let deleteButton = document.createElement('button')
+    deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+    <line x1="4" y1="7" x2="20" y2="7" />
+    <line x1="10" y1="11" x2="10" y2="17" />
+    <line x1="14" y1="11" x2="14" y2="17" />
+    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+    </svg>`
+    
+    deleteButton.addEventListener("click", function(e) {
+        //console.log(e.target.parentElement.parentElement)
+        ws.send(JSON.stringify({"type": "delete-mess", "id-mess": e.target.parentElement.parentElement.dataset.messageid}))
+    })
+    msgDiv.appendChild(deleteButton)
+
     if (message.sender_email !== user.email) {
         msgDiv.className = 'message received'
     }
@@ -166,7 +182,8 @@ window.onload = function () {
 
         ws.onmessage = (msg) => {
             answer = JSON.parse(msg.data)
-            console.log(answer)
+            //console.log(answer)
+            console.log(answer.type)
             if (answer.type === "signin") {
                 if (answer.status === "ok") {
                     user.id = answer.user_id
@@ -182,6 +199,7 @@ window.onload = function () {
                 }
             }
             if (answer.type === "receive-message") {
+                console.log("orice")
                 if (answer.conversation === currentConversation.id) {
                     showMessage(answer)
                 }
@@ -203,6 +221,13 @@ window.onload = function () {
                 for(let i = 0; i < answer.mess.length; i++){
                     showMessage(answer.mess[i])
                 }
+            }
+            if(answer.type === "delete-message") {
+                console.log("asdafasdgasdgasdg")
+                console.log(answer)
+                document.querySelector(`#messages > div[data-messageId="${answer.messId}"] > p`).innerText = '(Message deleted)'
+            } else {
+                console.log(answer)
             }
         };
     }

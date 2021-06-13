@@ -61,7 +61,7 @@ ws.onmessage = (msg) => {
     if (answer.type === "signin") {
         if (answer.status === "ok") {
             user = document.getElementById("emailLog").value
-            cancelForm(formularSignIn)
+            //cancelForm(formularSignIn)
             document.getElementById("signin").style.display = "none"
             document.getElementById("signup").style.display = "none"
             // document.getElementById("log-out").style.display = "block"

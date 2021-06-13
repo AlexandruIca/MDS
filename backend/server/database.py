@@ -305,3 +305,25 @@ class Database:
 
         for row in cursor.execute('SELECT * FROM users'):
             yield row
+
+    def deleteMess(self, id_mess: int):
+        cursor: Cursor = self.db.cursor()
+        cursor.execute('''
+        UPDATE
+            messages
+        SET 
+            mess_text = '(Message deleted)'
+        WHERE
+            message_id = ?
+        ''', (id_mess,))
+        self.db.commit()
+        cursor.execute('''
+        SELECT
+            conv_id
+        FROM
+            messages
+        WHERE
+            message_id = ?
+        ''', (id_mess,))
+        return int(cursor.lastrowid)
+
