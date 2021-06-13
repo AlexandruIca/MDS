@@ -250,6 +250,44 @@ class Database:
 
         return message_id, message_date
 
+    def insert_file(self, email, conversation, file):
+        cursor: Cursor = self.db.cursor()
+        cursor.execute('''
+        INSERT into files (file_)
+        VALUES (?)
+        ''', (file,))
+
+        conv_id = int(cursor.lastrowid) 
+        sender_id = self.get_id_for_user(email)
+        cursor.execute('''
+        INSERT INTO
+            messages(
+                date_,
+                conv_id,
+                sender_id,
+                reply,
+                mess_text,
+                file_id
+            )
+        VALUES (
+            datetime('now'),
+            ?,
+            ?,
+            0,
+            NULL,
+            ?
+        )
+        ''', (conv_id, sender_id, file))
+
+        message_id = int(cursor.lastrowid)
+        message_date = cursor.execute('''
+            SELECT date_ FROM messages WHERE message_id = ?
+        ''', (message_id,)).fetchone()[0]
+
+        self.db.commit()
+        return file, message_id, sender_id, message_date
+
+
     def get_users_for_group(self, group_id: int) -> Any:
         cursor: Cursor = self.db.cursor()
 

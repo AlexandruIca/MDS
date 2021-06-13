@@ -151,6 +151,20 @@ async def websocket_endpoint(websocket: WebSocket):
                 id_conv = load_json[1]
                 lst = db.get_messages_for_group(id_conv)
                 await manager.send_personal_message(json.dumps({"type": "load-mess", "mess": lst}), websocket)
+            elif load_json[0] == "attachment":
+                email, conversation, data = load_json[1:]
+                message_id, file_data, sender_id, message_date = db.insert_file(email, conversation, data)
+                await manager.send_to_relevant_users(conversation, json.dumps( {
+                    "type": "receive-message",
+                    "conversation": conversation,
+                    "id": message_id,
+                    "sender": sender_id,
+                    "sender_email": email,
+                    "sender_name": user_name,
+                    "text": "",
+                    "date": message_date,
+                    "file": file_data
+                }))
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)

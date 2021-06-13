@@ -20,7 +20,12 @@ function showMessage(message) {
     msgUser.innerText = message.sender_name;
 
     let msgContent = document.createElement('p')
-    msgContent.innerText = message.text
+    if (message.text.length === 0) {
+        msgContent.innerText = message.file
+    }
+    else {
+        msgContent.innerText = message.text
+    }
 
     let dateSeparator = document.createElement('hr')
     dateSeparator.style.display = 'block'
@@ -232,3 +237,38 @@ document.getElementById('btn-logout').addEventListener('click', () => {
     window.localStorage.removeItem('mds_password')
     window.location.replace('./index.html')
 })
+
+let f = document.getElementById('myfile')
+
+function uploadFile() {
+    let file = f.files[0];
+  
+    if (!file) {
+      return
+    }
+
+    if (file.size > 10000000) {
+      alert('File should be smaller than 1MB')
+      return
+    }
+  
+    var reader = new FileReader();
+    var rawData = new ArrayBuffer();
+  
+    reader.onload = function(e) {
+      rawData = e.target.result;
+      console.log("Ceva");
+      ws.send ( {
+        type: 'attachment',
+        email: user.email,
+        conversation: currentConversation.id,
+        data: rawData
+        } , (result) => {
+            alert("Server has received file!")
+      });
+      
+      alert("the File has been transferred.")
+    }
+  
+    reader.readAsArrayBuffer(file);
+  }
