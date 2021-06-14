@@ -4,11 +4,11 @@
 # Real Time Messaging
 
 ## Membrii
-* Gherghina Roxana-Ioana (231)
-* Ica Alexandru-Gabriel (232)
-* Arsene Marinel (233)
-* Cioarec George (233)
-* Tudose Mihai-Cristian (233)
+* [Gherghina Roxana-Ioana](https://github.com/roxana1708) (231)
+* [Ica Alexandru-Gabriel](https://github.com/AlexandruIca) (232)
+* [Arsene Marinel](https://github.com/Arsene-Marinel) (233)
+* [Cioarec George](https://github.com/George2208) (233)
+* [Tudose Mihai-Cristian](https://github.com/jungle335) (233)
 
 
 ## Ce face aplicatia?
