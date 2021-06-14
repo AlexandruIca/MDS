@@ -16,16 +16,30 @@ Inspirata de modelul de WhatsApp si Discord, in aplicatia noastra clientul poate
 
 ## User Stories
 
-1. Utilizatorul isi poate face un cont nou (va introduce datele necesare (email, parola) si va primi un mail de confirmare)
-2. Utilizatorul se poate loga/deloga sau pooate sa-si schimbe parola.
-3. Odata logat, poate cauta membri si grupuri print-un meniu de search.
-4. Poate vedea conversatiile si grupurile din care face parte.
-5. Poate trimite mesaje text sau fisiere, care vor fi vazute in timp real de catre ceilalti participantii.
-6. Posibilitate de search in conversatii.
-7. Sa salveze un mesaj in sectiunea de “importante”, sau cu tag.
-8. Sa poata da reply la un mesaj.
-9. Sa poata sterge un mesaj de-al lui.
-10. Recuperare cont in caz ca utilizatorul uita parola
+1. Utilizatorul isi poate face un cont nou: va introduce datele necesare (email, parola) si va primi un mail de confirmare.
+2. Utilizatorul se poate loga/deloga.
+3. Odata logat, poate cauta membri print-un meniu de search.
+4. Poate vedea conversatiile din care face parte.
+5. Poate trimite mesaje text care vor fi vazute in timp real de catre ceilalti participantii.
+6. Poate trimite fisiere in timp real, care pot fi descarcate de catre destinatar. (partial)
+7. Sa salveze un mesaj in sectiunea de “importante”. (partial)
+8. Sa poata sterge un mesaj de-al lui. (partial)
+9. Sa poata da reply la un mesaj. *
+10. Sa poata cauta mesaje in conversatie. *
+11. Recuperare cont in caz ca utilizatorul uita parola. *
+
+\* aceste cerinte nu au fost implementate
+
+
+## Backlog
+
+Backlogul se afla [aici](https://github.com/AlexandruIca/MDS/projects/1) 
+
+## UML
+
+Cum functioneaza conceptual?
+![Diagrama aici](./media/UML_MDS.pdf)
+Cum comunica clientul cu serverul?
 
 ## Running the server
 
