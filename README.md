@@ -3,6 +3,17 @@
 ---
 # Real Time Messaging
 
+## Membrii
+* Gherghina Roxana-Ioana (231)
+* Ica Alexandru-Gabriel (232)
+* Arsene Marinel (233)
+* Cioarec George (233)
+* Tudose Mihai-Cristian (233)
+
+
+## Ce face aplicatia?
+Inspirata de modelul de WhatsApp si Discord, in aplicatia noastra clientul poate sa isi creeze cont, sa trimita mesaje in timp real si sa caute useri cu care sa inceapa conversatii. 
+
 ## User Stories
 
 1. Utilizatorul isi poate face un cont nou (va introduce datele necesare (email, parola) si va primi un mail de confirmare)
