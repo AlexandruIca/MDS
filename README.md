@@ -35,15 +35,51 @@ Inspirata de modelul de WhatsApp si Discord, in aplicatia noastra clientul poate
 
 Backlogul se afla [aici](https://github.com/AlexandruIca/MDS/projects/1) 
 
+
+
 ## UML
 
 Cum functioneaza conceptual?
-![Diagrama aici](./media/UML_MDS.pdf)
+![Diagrama aici](./media/UML.png)
+
 Cum comunica clientul cu serverul?
+![Diagrama aici](./media/UMLServer.png)
 
-## Running the server
 
-Make sure you have [poetry](https://python-poetry.org/) installed, after that:
+
+## Source Control
+
+Initial am avut doua branch-uri, deoarece eram indecisi in privinta framework-ului pe care sa il utilizam.
+Tot proiectul se află pe github; commit-urile se pot vedea aici.
+
+
+
+## Teste Automate
+
+La fiecare push se executa doua script-uri pentru continuous integration:
+* [`Testing.yml`](https://github.com/AlexandruIca/MDS/blob/main/.github/workflows/Testing.yml) -> cateva teste pentru a ne asigura de functionarea login-ului
+* [`StaticAnalasys.yml`](https://github.com/AlexandruIca/MDS/blob/main/.github/workflows/StaticAnalysis.yml) -> verifica cu flake8 formatarea fisierelor python
+
+
+## Bug Reporting
+
+Issues: [#21](https://github.com/AlexandruIca/MDS/issues/21) si [#22](https://github.com/AlexandruIca/MDS/issues/22).
+
+## Python Environment Tools
+Poetry
+* pentru managmentul bibliotecilor externe si versiunilor de python
+* in fisierul [poetry.lock](https://github.com/AlexandruIca/MDS/blob/main/backend/poetry.lock) se afla versiunile dependintelor (pentru ca fiecare dintre noi sa aiba aceleasi versiuni)
+
+## Code Standards
+Codul respecta style guide-ul [PEP8](https://www.python.org/dev/peps/pep-0008/).
+
+## Design Patterns
+* Client/Server - clientul deschide si comunica mesaje de tip JSON cu serverul printr-un WebSocket
+* Object Pool - tinem un 'pool' de conexiuni WebSocket pentru a vedea care users sunt conectati, pentru a putea trimite mesajele in real time
+
+## Run your own server
+
+Asigura-te ca ai [poetry](https://python-poetry.org/) instalat, iar apoi in terminal:
 ```sh
 cd backend/
 
@@ -51,49 +87,5 @@ poetry install
 
 ../scripts/run.sh
 ```
-Once the server is running you can open [client/index.html](client/index.html) in a browser and the connection should
-be established.
-
-
-## Schema db
-users:
-
-	user_id integer PRIMARY KEY,
-	email text,
-	password text,
-	first_name text,
-	last_name text
-
-groups: 
-
-	group_id integer PRIMARY KEY,
-	group_name text,
-	is_dm integer                           - daca este conversatie privata intre doi utilizatori
-
-
-participans:
-
-	group_id integer PRIMARY KEY,      - tabela asociativa
-	user_id integer PRIMARY KEY,
-	joined_on text                     - data la care a intrat in grup
-
-files: 
-
-	file_id integer PRIMARY KEY,
-        file_                                    - tipul blob, aici va fi efectiv fisierul 
-
-messages:
-
-	message_id integer PRIMARY KEY,
-	date_ text,                           - sqlite nu are format special pt date asa ca folosim text
-	conv_id integer,                      - conversatia/grupul unde a fost trimis mesajul
-	sender_id integer,
-	reply integer,                        - "parintele" reply-ului
-	mess_text text,                       - continutul text al mesajului
-	file_id integer
-
-starred_messages:
-
-	user_id integer PRIMARY KEY,
-	message_id integer
+Odata ce serverul a pornit deschideti [client/index.html](client/index.html) in browser si conectati-va.
 
