@@ -3,6 +3,10 @@
 ---
 # Real Time Messaging
 
+## Demo
+![Real time chatting](./media/AppDemo.mp4)
+![Signup demo](./media/Signup.mp4)
+
 ## Membrii
 * [Gherghina Roxana-Ioana](https://github.com/roxana1708) (231)
 * [Ica Alexandru-Gabriel](https://github.com/AlexandruIca) (232)
