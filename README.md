@@ -4,8 +4,8 @@
 # Real Time Messaging
 
 ## Demo
-![Real time chatting](./media/AppDemo.mp4)
-![Signup demo](./media/Signup.mp4)
+<video src="https://user-images.githubusercontent.com/30365758/122101816-6b081f80-ce1d-11eb-9f12-27645770e475.mp4" controls preload></video>
+<video src="https://user-images.githubusercontent.com/30365758/122101918-8b37de80-ce1d-11eb-866f-11a28722e9ca.mp4" controls preload></video>
 
 ## Membrii
 * [Gherghina Roxana-Ioana](https://github.com/roxana1708) (231)
